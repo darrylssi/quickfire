@@ -1,6 +1,10 @@
 <resources>
-    <string name="app_name">🔥 Quickfire 🔥</string>
+    <string name="app_name">Quickfire</string>
+    <string name="quickfire">🔥 Quickfire 🔥</string>
     <string name="party_name">Party Name</string>
     <string name="add_person">Add Person</string>
     <string name="start_matching">Start Matching</string>
+    <string name="party_people">Party People</string>
+    <string name="create_party">Create Party</string>
+    <string name="join_party">Join Party</string>
 </resources>
