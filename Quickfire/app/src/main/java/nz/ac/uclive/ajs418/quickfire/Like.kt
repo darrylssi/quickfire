@@ -4,11 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "party")
-class Party (
-    @ColumnInfo var name: String,
-    @ColumnInfo var members: List<User>,
-    @ColumnInfo var matches: List<Long>
-        ) {
+@Entity(tableName = "like")
+class Like (
+    @ColumnInfo var partyId: Long,
+    @ColumnInfo var movieId: Long,
+    @ColumnInfo var likedBy: List<User>
+        ){
     @PrimaryKey(autoGenerate = true) var id: Long = 0
+
 }
