@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 class Party (
     @ColumnInfo var name: String,
     @ColumnInfo var members: List<User>,
-    @ColumnInfo var matches: List<Long>
+    @ColumnInfo var matches: List<Movie>
         ) {
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 }
