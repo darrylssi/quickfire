@@ -7,4 +7,6 @@
     <string name="party_people">Party People</string>
     <string name="create_party">Create Party</string>
     <string name="join_party">Join Party</string>
+    <string name="no">no</string>
+    <string name="yes">yes</string>
 </resources>
