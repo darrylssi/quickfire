@@ -10,19 +10,27 @@ import nz.ac.uclive.ajs418.quickfire.R
 
 class HomeFragment : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        val createButton: Button = findViewById(R.id.createPartyButton)
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val createPartyButton = view.findViewById<Button>(R.id.createPartyButton)
+
+        createPartyButton.setOnClickListener {
+            val fragmentTransaction = parentFragmentManager.beginTransaction()
+            val connectFragment = ConnectFragment()
+
+            // Replace FragmentA with FragmentB
+            fragmentTransaction.replace(R.id.fragmentContainer, connectFragment)
+                .commit()
+        }
     }
 
 }
