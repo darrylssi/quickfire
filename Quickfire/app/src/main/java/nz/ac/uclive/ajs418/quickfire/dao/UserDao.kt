@@ -10,9 +10,6 @@ interface UserDao {
     @Insert
     suspend fun insert(user : User): Long
 
-    @Update
-    suspend fun update (user : User): Long
-
     @Query("SELECT * FROM user")
     fun getAll(): Flow<List<User>>
 
