@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "party")
 class Party (
     @ColumnInfo var name: String,
-    @ColumnInfo var members: List<User>,
-    @ColumnInfo var matches: List<Movie>
+    @ColumnInfo var members: List<Long>,
+    @ColumnInfo var matches: List<Long>
         ) {
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 }
