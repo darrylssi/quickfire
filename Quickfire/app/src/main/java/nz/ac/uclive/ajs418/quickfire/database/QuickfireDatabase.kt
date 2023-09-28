@@ -5,9 +5,10 @@ import nz.ac.uclive.ajs418.quickfire.entity.Like
 import android.content.Context
 import androidx.room.*
 import nz.ac.uclive.ajs418.quickfire.entity.Converters
+import nz.ac.uclive.ajs418.quickfire.entity.Party
 import nz.ac.uclive.ajs418.quickfire.entity.User
 
-@Database(entities =  [User::class, Like::class], version = 1)
+@Database(entities =  [User::class, Like::class, Party::class], version = 1)
 @TypeConverters(Converters::class)
 abstract class QuickfireDatabase : RoomDatabase() {
     abstract fun likeDao() : LikeDao
