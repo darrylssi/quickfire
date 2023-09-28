@@ -4,8 +4,9 @@ import nz.ac.uclive.ajs418.quickfire.dao.LikeDao
 import nz.ac.uclive.ajs418.quickfire.entity.Like
 import android.content.Context
 import androidx.room.*
+import nz.ac.uclive.ajs418.quickfire.entity.User
 
-@Database(entities =  [Like::class], version = 1)
+@Database(entities =  [User::class, Like::class], version = 1)
 abstract class QuickfireDatabase : RoomDatabase() {
     abstract fun likeDao() : LikeDao
 
