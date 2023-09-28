@@ -1,10 +1,8 @@
 package nz.ac.uclive.ajs418.quickfire.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 
-@Entity(tableName = "like")
+@Entity(tableName = "like_table")
 class Like (
     @ColumnInfo var partyId: Long,
     @ColumnInfo var movieId: Long,
