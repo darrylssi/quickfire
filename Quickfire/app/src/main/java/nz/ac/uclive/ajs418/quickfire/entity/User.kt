@@ -1,4 +1,4 @@
-package nz.ac.uclive.ajs418.quickfire
+package nz.ac.uclive.ajs418.quickfire.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

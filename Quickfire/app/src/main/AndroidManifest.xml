@@ -13,17 +13,10 @@
         android:theme="@style/Theme.Quickfire"
         tools:targetApi="31">
         <activity
-            android:name=".activity.PlayActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.ConnectActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.HomeActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
