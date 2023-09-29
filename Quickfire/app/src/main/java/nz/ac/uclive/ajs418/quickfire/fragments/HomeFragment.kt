@@ -34,9 +34,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun replaceWithConnect(isMember: Boolean) {
+        val bundle = Bundle()
+        bundle.putBoolean("isMember", isMember)
 
         val fragmentTransaction = parentFragmentManager.beginTransaction()
         val connectFragment = ConnectFragment()
+        connectFragment.arguments = bundle
 
         fragmentTransaction.replace(R.id.fragmentContainer, connectFragment)
             .commit()
