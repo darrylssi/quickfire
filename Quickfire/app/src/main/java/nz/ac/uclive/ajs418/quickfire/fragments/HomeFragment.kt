@@ -22,15 +22,24 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val createPartyButton = view.findViewById<Button>(R.id.createPartyButton)
+        val joinPartyButton = view.findViewById<Button>(R.id.joinPartyButton)
 
         createPartyButton.setOnClickListener {
-            val fragmentTransaction = parentFragmentManager.beginTransaction()
-            val connectFragment = ConnectFragment()
-
-            // Replace FragmentA with FragmentB
-            fragmentTransaction.replace(R.id.fragmentContainer, connectFragment)
-                .commit()
+            replaceWithConnect(false)
         }
+
+        joinPartyButton.setOnClickListener {
+            replaceWithConnect(true)
+        }
+    }
+
+    private fun replaceWithConnect(isMember: Boolean) {
+
+        val fragmentTransaction = parentFragmentManager.beginTransaction()
+        val connectFragment = ConnectFragment()
+
+        fragmentTransaction.replace(R.id.fragmentContainer, connectFragment)
+            .commit()
     }
 
 }
