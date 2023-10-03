@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import nz.ac.uclive.ajs418.quickfire.R
 
@@ -24,6 +26,7 @@ class ConnectFragment : Fragment() {
     private val REQUEST_ENABLE_BT = 1
     private val REQUEST_BLUETOOTH_SCAN_PERMISSION = 2
     private val CONNECT_FRAGMENT_TEXT = "Connect Fragment"
+
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             Log.d("ConnectFragment","test")
@@ -49,6 +52,7 @@ class ConnectFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_connect, container, false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -75,6 +79,7 @@ class ConnectFragment : Fragment() {
         button.setTextColor(ContextCompat.getColor(view.context, R.color.white))
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun initializeBluetoothConnection() {
         Log.d(CONNECT_FRAGMENT_TEXT, "Initializing Bluetooth Connection")
         val bluetoothManager: BluetoothManager? = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
@@ -85,7 +90,9 @@ class ConnectFragment : Fragment() {
             // Device doesn't support Bluetooth
             Log.d(CONNECT_FRAGMENT_TEXT, "Bluetooth Not Supported")
             return
-        } else if (!bluetoothAdapter.isEnabled) {
+        }
+        // CHECK IF BLUETOOTH IS OFF AND TURN ON
+        else if (!bluetoothAdapter.isEnabled) {
             Log.d(CONNECT_FRAGMENT_TEXT, "Bluetooth Disabled - trying to enable")
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
@@ -106,6 +113,7 @@ class ConnectFragment : Fragment() {
 
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 

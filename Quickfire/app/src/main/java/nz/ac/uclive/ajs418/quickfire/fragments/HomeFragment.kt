@@ -1,5 +1,7 @@
 package nz.ac.uclive.ajs418.quickfire.fragments
 
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -29,8 +31,17 @@ class HomeFragment : Fragment() {
         }
 
         joinPartyButton.setOnClickListener {
+            enableDiscovery()
             replaceWithConnect(true)
         }
+    }
+
+    private fun enableDiscovery() {
+        val requestCode = 1;
+        val discoverableIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
+            putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
+        }
+        startActivityForResult(discoverableIntent, requestCode)
     }
 
     private fun replaceWithConnect(isMember: Boolean) {
