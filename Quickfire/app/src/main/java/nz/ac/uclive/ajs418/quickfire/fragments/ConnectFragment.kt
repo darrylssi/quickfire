@@ -1,9 +1,14 @@
 package nz.ac.uclive.ajs418.quickfire.fragments
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,8 +22,25 @@ import nz.ac.uclive.ajs418.quickfire.R
 
 class ConnectFragment : Fragment() {
     private val REQUEST_ENABLE_BT = 1
-    private val REQUEST_DISCOVERABLE = 2
+    private val REQUEST_BLUETOOTH_SCAN_PERMISSION = 2
     private val CONNECT_FRAGMENT_TEXT = "Connect Fragment"
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            Log.d("ConnectFragment","test")
+            when(intent.action) {
+                BluetoothDevice.ACTION_FOUND -> {
+                    Log.d("ConnectFragment","test2")
+                    // Discovery has found a device. Get the BluetoothDevice
+                    // object and its info from the Intent.
+                    val device: BluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)!!
+                    // val deviceName = device.name
+                    val deviceAddress = device.address
+                    Log.d("ConnectFragment",deviceAddress)
+                }
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,6 +51,10 @@ class ConnectFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Set up bluetooth receiver
+        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+        requireActivity().registerReceiver(receiver, filter)
 
         val addButton = view.findViewById<Button>(R.id.addPersonButton)
         addButton.setOnClickListener {
@@ -50,10 +76,11 @@ class ConnectFragment : Fragment() {
     }
 
     private fun initializeBluetoothConnection() {
-        Log.d("Connect Fragment", "Initializing Bluetooth Connection")
+        Log.d(CONNECT_FRAGMENT_TEXT, "Initializing Bluetooth Connection")
         val bluetoothManager: BluetoothManager? = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
         val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
 
+        // CHECK IF DEVICE SUPPORTS BLUETOOTH
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
             Log.d(CONNECT_FRAGMENT_TEXT, "Bluetooth Not Supported")
@@ -64,9 +91,37 @@ class ConnectFragment : Fragment() {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
 
-        // Bluetooth is enabled, proceed with device discovery
-        val discoveryIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
-        startActivityForResult(discoveryIntent, REQUEST_DISCOVERABLE)
+        // REQUEST PERMISSION TO CONDUCT BLUETOOTH SCAN
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
+            // BLUETOOTH_SCAN permission is already granted, proceed with Bluetooth operations
+        } else {
+            // BLUETOOTH_SCAN permission is not granted, request it
+            Log.d(CONNECT_FRAGMENT_TEXT, "Ask for permission")
+            requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_SCAN), REQUEST_BLUETOOTH_SCAN_PERMISSION)
+        }
+
+        Log.d("ConnectFragment", "Begin Scan")
+        // START BLUETOOTH SCAN
+        val discoveryStarted = bluetoothAdapter.startDiscovery()
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            REQUEST_BLUETOOTH_SCAN_PERMISSION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // BLUETOOTH_SCAN permission granted, proceed with Bluetooth operations
+                } else {
+                    // Permission denied, handle this case (show a message, ask again, etc.)
+                    Log.d(CONNECT_FRAGMENT_TEXT, "Permission Denied to Scan")
+                    return
+                }
+            }
+        }
     }
 
 }
+
+
