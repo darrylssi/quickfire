@@ -1,7 +1,9 @@
 package nz.ac.uclive.ajs418.quickfire
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import nz.ac.uclive.ajs418.quickfire.databinding.ActivityMainBinding
@@ -22,21 +24,30 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE)
+        val isDarkTheme = sharedPreferences.getBoolean("nightMode", false)
+
+        // Set the theme based on the saved preference
+        if (isDarkTheme)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         // Inflate the layout using View Binding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         bottomNavigationView = binding.bottomNavigation // Initialize the BottomNavigationView
 
-        replaceFragment(homeFragment)    // Set the initial fragment to ConnectFragment
+        replaceFragment(homeFragment, "home")    // Set the initial fragment to ConnectFragment
 
         // Handle navigation item selection
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.connectFragment -> replaceFragment(homeFragment)
-                R.id.playFragment -> replaceFragment(playFragment)
-                R.id.matchesFragment -> replaceFragment(matchesFragment)
-                R.id.settingsFragment -> replaceFragment(settingsFragment)
+                R.id.connectFragment -> replaceFragment(homeFragment, "home")
+                R.id.playFragment -> replaceFragment(playFragment, "play")
+                R.id.matchesFragment -> replaceFragment(matchesFragment, "match")
+                R.id.settingsFragment -> replaceFragment(settingsFragment, "settings")
             }
             true
         }
@@ -44,9 +55,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Function to replace the fragment in the fragment container
-    private fun replaceFragment(fragment: Fragment) {
+    private fun replaceFragment(fragment: Fragment, tag: String) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
+            .replace(R.id.fragmentContainer, fragment, tag)
             .commit()
     }
 
