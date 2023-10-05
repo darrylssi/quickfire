@@ -1,7 +1,9 @@
 package nz.ac.uclive.ajs418.quickfire
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import nz.ac.uclive.ajs418.quickfire.databinding.ActivityMainBinding
@@ -21,6 +23,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE)
+        val isDarkTheme = sharedPreferences.getBoolean("isNightMode", false)
+
+        // Set the theme based on the saved preference
+        if (isDarkTheme)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         // Inflate the layout using View Binding
         binding = ActivityMainBinding.inflate(layoutInflater)

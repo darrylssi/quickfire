@@ -16,4 +16,8 @@
         <item name="windowNoTitle">true</item>
 <!--        <item name="android:windowFullscreen">true</item>-->
     </style>
+
+    <style name="TextColor"><item name="android:textColor">@color/black</item></style>
+    <style name="BackgroundColor"><item name="android:background">@color/white</item></style>
+
 </resources>
