@@ -16,8 +16,6 @@ import nz.ac.uclive.ajs418.quickfire.R
 
 class SettingsFragment : Fragment() {
 
-    private lateinit var editor: Editor
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,7 +30,7 @@ class SettingsFragment : Fragment() {
         val switch: SwitchCompat = view.findViewById(R.id.themeSwitch)
         val theme: TextView = view.findViewById(R.id.themeText)
         val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("MODE", Context.MODE_PRIVATE)
-        val nightMode: Boolean = sharedPreferences.getBoolean("nightMode", false)
+        val nightMode: Boolean = sharedPreferences.getBoolean("isNightMode", false)
 
         if (nightMode) {
             switch.isChecked = true
@@ -41,18 +39,24 @@ class SettingsFragment : Fragment() {
         }
 
         switch.setOnClickListener {
+            sharedPreferences.edit().putBoolean("isThemeChanged", true).apply()
             if (nightMode) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                editor = sharedPreferences.edit()
-                editor.putBoolean("nightMode", false)
+                sharedPreferences.edit().putBoolean("isNightMode", false).apply()
                 theme.text = getString(R.string.light)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                editor = sharedPreferences.edit()
-                editor.putBoolean("nightMode", true)
+                sharedPreferences.edit().putBoolean("isNightMode", true).apply()
                 theme.text = getString(R.string.dark)
             }
-            editor.apply()
+        }
+
+        val changed: Boolean = sharedPreferences.getBoolean("isThemeChanged", false)
+        if (changed) {
+            sharedPreferences.edit().putBoolean("isThemeChanged", false).apply()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, SettingsFragment())
+                .commit()
         }
     }
 

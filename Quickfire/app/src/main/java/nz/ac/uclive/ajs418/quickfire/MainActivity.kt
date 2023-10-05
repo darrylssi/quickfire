@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE)
-        val isDarkTheme = sharedPreferences.getBoolean("nightMode", false)
+        val isDarkTheme = sharedPreferences.getBoolean("isNightMode", false)
 
         // Set the theme based on the saved preference
         if (isDarkTheme)
@@ -39,15 +39,15 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView = binding.bottomNavigation // Initialize the BottomNavigationView
 
-        replaceFragment(homeFragment, "home")    // Set the initial fragment to ConnectFragment
+        replaceFragment(homeFragment)    // Set the initial fragment to ConnectFragment
 
         // Handle navigation item selection
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.connectFragment -> replaceFragment(homeFragment, "home")
-                R.id.playFragment -> replaceFragment(playFragment, "play")
-                R.id.matchesFragment -> replaceFragment(matchesFragment, "match")
-                R.id.settingsFragment -> replaceFragment(settingsFragment, "settings")
+                R.id.connectFragment -> replaceFragment(homeFragment)
+                R.id.playFragment -> replaceFragment(playFragment)
+                R.id.matchesFragment -> replaceFragment(matchesFragment)
+                R.id.settingsFragment -> replaceFragment(settingsFragment)
             }
             true
         }
@@ -55,9 +55,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Function to replace the fragment in the fragment container
-    private fun replaceFragment(fragment: Fragment, tag: String) {
+    private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment, tag)
+            .replace(R.id.fragmentContainer, fragment)
             .commit()
     }
 

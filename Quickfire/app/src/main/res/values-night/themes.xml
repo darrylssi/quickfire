@@ -18,5 +18,6 @@
     </style>
 
     <style name="TextColor"><item name="android:textColor">@color/white</item></style>
+    <style name="BackgroundColor"><item name="android:background">@color/black</item></style>
 
 </resources>
