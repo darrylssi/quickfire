@@ -27,18 +27,27 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val switch: SwitchCompat = view.findViewById(R.id.themeSwitch)
+        val themeSwitch: SwitchCompat = view.findViewById(R.id.themeSwitch)
+        val mediaSwitch: SwitchCompat = view.findViewById(R.id.mediaSwitch)
         val theme: TextView = view.findViewById(R.id.themeText)
+        val media: TextView = view.findViewById(R.id.mediaText)
+
         val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("MODE", Context.MODE_PRIVATE)
         val nightMode: Boolean = sharedPreferences.getBoolean("isNightMode", false)
+        val movieMode: Boolean = sharedPreferences.getBoolean("isMovieMode", true)
 
         if (nightMode) {
-            switch.isChecked = true
+            themeSwitch.isChecked = true
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             theme.text = getString(R.string.dark)
         }
 
-        switch.setOnClickListener {
+        if (movieMode) {
+            mediaSwitch.isChecked = true
+            media.text = getString(R.string.movie)
+        }
+
+        themeSwitch.setOnClickListener {
             sharedPreferences.edit().putBoolean("isThemeChanged", true).apply()
             if (nightMode) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -57,6 +66,16 @@ class SettingsFragment : Fragment() {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, SettingsFragment())
                 .commit()
+        }
+
+        mediaSwitch.setOnClickListener {
+            if (mediaSwitch.isChecked) {
+                sharedPreferences.edit().putBoolean("isMovieMode", true).apply()
+                media.text = getString(R.string.movie)
+            } else {
+                sharedPreferences.edit().putBoolean("isMovieMode", false).apply()
+                media.text = getString(R.string.tv_show)
+            }
         }
     }
 
