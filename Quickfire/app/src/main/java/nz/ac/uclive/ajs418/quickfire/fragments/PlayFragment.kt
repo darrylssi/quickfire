@@ -1,35 +1,23 @@
 package nz.ac.uclive.ajs418.quickfire.fragments
 
-import nz.ac.uclive.ajs418.quickfire.R
-import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import nz.ac.uclive.ajs418.quickfire.R
+import nz.ac.uclive.ajs418.quickfire.database.QuickfireDatabase
 import nz.ac.uclive.ajs418.quickfire.entity.Media
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.IOException
-import java.nio.charset.Charset
+import nz.ac.uclive.ajs418.quickfire.repository.MediaRepository
 import java.util.*
-import com.squareup.picasso.Picasso
 
 class PlayFragment : Fragment() {
-
-    // Initialize random generator
-    private val random = Random()
-
-    // List to store media data
-    private var mediaList: List<Media>? = null
 
     // UI elements
     private lateinit var posterView: ImageView
@@ -40,13 +28,12 @@ class PlayFragment : Fragment() {
     private lateinit var yesButton: Button
     private lateinit var noButton: Button
 
-    // Current media index
-    private var currentIndex = -1
+    private lateinit var mediaRepository: MediaRepository
+    private var currentMedia: Media? = null
 
-    // Variables for swipe gesture detection
     private var startX = 0f
     private var startY = 0f
-    private val SWIPE_THRESHOLD = 100 // Threshold for swipe gesture detection
+    private val SWIPE_THRESHOLD = 100
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +46,7 @@ class PlayFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize views
+        // Initialize UI elements
         posterView = view.findViewById(R.id.posterView)
         titleText = view.findViewById(R.id.titleText)
         yearText = view.findViewById(R.id.yearText)
@@ -68,28 +55,31 @@ class PlayFragment : Fragment() {
         yesButton = view.findViewById(R.id.yesButton)
         noButton = view.findViewById(R.id.noButton)
 
-        // Load media data when the fragment is created
-        loadMediaData(requireContext()) { success ->
-            if (success) {
-                // Set initial random media
-                val initialRandomMedia = selectRandomMedia()
-                displayMedia(initialRandomMedia)
-            }
-        }
+        // Initialize the MediaRepository with the MediaDao
+        mediaRepository = MediaRepository(QuickfireDatabase.getDatabase(requireContext()).mediaDao())
+
+        // Load initial random media
+        loadRandomMedia()
 
         // Handle the "Random" button click
         yesButton.setOnClickListener {
-            val randomMedia = selectRandomMedia()
-            displayMedia(randomMedia)
+            loadRandomMedia()
         }
 
         noButton.setOnClickListener {
-            val randomMedia = selectRandomMedia()
-            displayMedia(randomMedia)
+            loadRandomMedia()
         }
 
         // Set up swipe gesture detection
         setupSwipeGestureDetection()
+    }
+
+    // Function to load a random media item
+    private fun loadRandomMedia() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            currentMedia = mediaRepository.getRandomMedia()
+            displayMedia(currentMedia)
+        }
     }
 
     // Function to set up swipe gesture detection for posterView
@@ -108,7 +98,6 @@ class PlayFragment : Fragment() {
                     val deltaY = endY - startY
 
                     if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
-                        // Swipe detected, check direction
                         if (deltaX > 0) {
                             // Swipe right, perform the same action as clicking "Yes"
                             handleSwipeRight()
@@ -133,98 +122,32 @@ class PlayFragment : Fragment() {
 
     // Function to handle swipe right action
     private fun handleSwipeRight() {
-        val randomMedia = selectRandomMedia()
-        displayMedia(randomMedia)
+        loadRandomMedia()
     }
 
     // Function to handle swipe left action
     private fun handleSwipeLeft() {
-        val randomMedia = selectRandomMedia()
-        displayMedia(randomMedia)
-    }
-
-    // Function to load media data from JSON files
-    private fun loadMediaData(context: Context, callback: (Boolean) -> Unit) {
-        // Load media data from JSON files using coroutines
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val tvShowsJson = loadJsonFromAssets(context, "json/tv_shows.json")
-                val moviesJson = loadJsonFromAssets(context, "json/movies.json")
-
-                val tvShows = parseMediaJson(tvShowsJson)
-                val movies = parseMediaJson(moviesJson)
-
-                mediaList = tvShows + movies // Combine TV shows and movies
-                callback(true) // Notify that initialization is complete
-            } catch (e: IOException) {
-                // Handle the exception (e.g., file not found)
-                callback(false)
-            }
-        }
-    }
-
-    // Function to load JSON data from assets
-    private fun loadJsonFromAssets(context: Context, fileName: String): String {
-        return try {
-            val inputStream = context.assets.open(fileName)
-            val size = inputStream.available()
-            val buffer = ByteArray(size)
-            inputStream.read(buffer)
-            inputStream.close()
-            String(buffer, Charset.defaultCharset())
-        } catch (e: IOException) {
-            ""
-        }
-    }
-
-    // Function to parse JSON data into a list of Media objects
-    private fun parseMediaJson(json: String): List<Media> {
-        val mediaList = mutableListOf<Media>()
-        val jsonArray = JSONArray(json)
-        for (i in 0 until jsonArray.length()) {
-            val jsonObject = jsonArray.getJSONObject(i)
-            val title = jsonObject.getString("title")
-            val year = jsonObject.getString("year").toInt()
-            val type = jsonObject.getString("type")
-            val rating = jsonObject.optDouble("rating", 0.0).toString().toFloat()
-            val synopsis = jsonObject.getString("synopsis")
-            val imgUrl = jsonObject.optString("img", null)
-            val media = Media(title, year.toLong(), type, rating, synopsis, imgUrl)
-            mediaList.add(media)
-        }
-        return mediaList
-    }
-
-    // Function to select a random media item from the list
-    private fun selectRandomMedia(): Media? {
-        return if (mediaList?.isNotEmpty() == true) {
-            val randomIndex = random.nextInt(mediaList!!.size)
-            mediaList!![randomIndex]
-        } else {
-            null
-        }
+        loadRandomMedia()
     }
 
     // Function to display media details in the UI
     private fun displayMedia(media: Media?) {
         activity?.runOnUiThread {
-            // Update your UI to display the selected media
             if (media != null) {
+                // Load the media poster using Picasso
                 Picasso.get()
                     .load(media.imgUrl)
                     .fit()
                     .into(posterView)
-                // Make the image slightly transparent (adjust alpha)
-                posterView.alpha = 0.6f
 
+                // Set the media details in UI elements
                 titleText.text = media.title
-                yearText.text = "Year: " + media.year.toString()
-                typeText.text = "Type: " + media.type
+                yearText.text = "Year: ${media.year}"
+                typeText.text = "Type: ${media.type}"
 
-                // Check if the rating is available and not empty or null
+                // Calculate and set the scaled rating in the RatingBar
                 val scaledRating = when {
                     media.rating != null && media.rating.toString() != "" -> {
-                        // Convert the rating to a float and scale it down to 0-5 range
                         val ratingValue = media.rating!!.toFloat()
                         (ratingValue / 2f).coerceIn(0f, 5f)
                     }

@@ -15,4 +15,8 @@ interface MediaDao {
     @Query("SELECT * FROM media")
     fun getAll(): Flow<List<Media>>
 
+    @Query("SELECT * FROM media ORDER BY RANDOM() LIMIT 1")
+    fun getRandomMedia(): Media?
+
+
 }
