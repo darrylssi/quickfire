@@ -70,7 +70,7 @@ class ConnectFragment : Fragment() {
         when (requestCode) {
             REQUEST_BLUETOOTH_SCAN_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // BLUETOOTH_SCAN permission granted, proceed with Bluetooth operations
+
                 } else {
                     // Permission denied, handle this case (show a message, ask again, etc.)
                     Log.d(CONNECT_FRAGMENT_TEXT, "Permission Denied to Scan")
@@ -94,6 +94,12 @@ class ConnectFragment : Fragment() {
         } else {
             // BLUETOOTH permission is not granted, request it
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH), REQUEST_BLUETOOTH_PERMISSION)
+        }
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+            // BLUETOOTH permission is already granted, proceed with accessing paired devices
+        } else {
+            // BLUETOOTH permission is not granted, request it
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH_CONNECT), REQUEST_BLUETOOTH_PERMISSION)
         }
         val pairedDevices = bluetoothAdapter?.bondedDevices
 

@@ -97,6 +97,12 @@ class HomeFragment : Fragment() {
             // BLUETOOTH permission is not granted, request it
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH), REQUEST_BLUETOOTH_PERMISSION)
         }
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+            // BLUETOOTH permission is already granted, proceed with accessing paired devices
+        } else {
+            // BLUETOOTH permission is not granted, request it
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH_CONNECT), REQUEST_BLUETOOTH_PERMISSION)
+        }
         Log.d("HomeFragment", "Listen")
         val serverSocket: BluetoothServerSocket? = bluetoothAdapter?.listenUsingRfcommWithServiceRecord(APP_NAME, MY_UUID)
         Log.d("HomeFragment", "ListenFinished?")
