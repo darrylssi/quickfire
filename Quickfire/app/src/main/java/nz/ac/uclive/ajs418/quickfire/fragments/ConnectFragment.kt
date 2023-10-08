@@ -70,7 +70,7 @@ class ConnectFragment : Fragment() {
         when (requestCode) {
             REQUEST_BLUETOOTH_SCAN_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    //Something something something
                 } else {
                     // Permission denied, handle this case (show a message, ask again, etc.)
                     Log.d(CONNECT_FRAGMENT_TEXT, "Permission Denied to Scan")
