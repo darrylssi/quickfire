@@ -23,6 +23,7 @@ class HomeFragment : Fragment() {
 
         val createPartyButton = view.findViewById<Button>(R.id.createPartyButton)
         val joinPartyButton = view.findViewById<Button>(R.id.joinPartyButton)
+        val soloPlayButton = view.findViewById<Button>(R.id.soloPlayButton)
 
         createPartyButton.setOnClickListener {
             replaceWithConnect(false)
@@ -30,6 +31,10 @@ class HomeFragment : Fragment() {
 
         joinPartyButton.setOnClickListener {
             replaceWithConnect(true)
+        }
+
+        soloPlayButton.setOnClickListener {
+            replaceWithPlay()
         }
     }
 
@@ -42,6 +47,14 @@ class HomeFragment : Fragment() {
         connectFragment.arguments = bundle
 
         fragmentTransaction.replace(R.id.fragmentContainer, connectFragment)
+            .commit()
+    }
+
+    private fun replaceWithPlay() {
+        val playFragment = PlayFragment()
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, playFragment)
             .commit()
     }
 
