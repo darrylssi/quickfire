@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -21,16 +20,15 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import nz.ac.uclive.ajs418.quickfire.BluetoothClientService
 import nz.ac.uclive.ajs418.quickfire.R
-import java.io.IOException
-import java.util.UUID
 
 
 class ConnectFragment : Fragment() {
     private val REQUEST_BLUETOOTH_SCAN_PERMISSION = 1
     private val REQUEST_BLUETOOTH_PERMISSION = 2
     private val CONNECT_FRAGMENT_TEXT = "Connect Fragment"
-    val MY_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
+    private lateinit var bluetoothClientService: BluetoothClientService
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +41,7 @@ class ConnectFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bluetoothClientService = BluetoothClientService()
 
         val addButton = view.findViewById<Button>(R.id.addPersonButton)
         addButton.setOnClickListener {
@@ -89,12 +88,16 @@ class ConnectFragment : Fragment() {
         // Get the set of paired devices
         val bluetoothManager: BluetoothManager? = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
         val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
+
+        // BLUETOOTH PERMISSION
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
             // BLUETOOTH permission is already granted, proceed with accessing paired devices
         } else {
             // BLUETOOTH permission is not granted, request it
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH), REQUEST_BLUETOOTH_PERMISSION)
         }
+
+        // BLUETOOTH_CONNECT PERMISSION
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
             // BLUETOOTH permission is already granted, proceed with accessing paired devices
         } else {
@@ -119,38 +122,12 @@ class ConnectFragment : Fragment() {
             // Check if a device was selected
             selectedDevice?.let {
                 // Establish a connection with the selected device
-                connectToDevice(it)
-                Log.d(CONNECT_FRAGMENT_TEXT, "Hello")
-                dialog.dismiss() // Close the dialog after connecting
+                bluetoothClientService.connectToDevice(it, requireContext(), requireActivity())
+                dialog.dismiss()
             }
         }
 
         dialog.show()
-    }
-
-    // Function for the host to attempt to connect
-    private fun connectToDevice(device: BluetoothDevice) {
-        Log.d(CONNECT_FRAGMENT_TEXT, "TEST1")
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
-            // BLUETOOTH permission is already granted, proceed with accessing paired devices
-        } else {
-            // BLUETOOTH permission is not granted, request it
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH), REQUEST_BLUETOOTH_PERMISSION)
-        }
-        Log.d(CONNECT_FRAGMENT_TEXT, "TEST2")
-        val bluetoothSocket: BluetoothSocket? = device.createRfcommSocketToServiceRecord(MY_UUID)
-        Log.d(CONNECT_FRAGMENT_TEXT, "TEST3")
-        bluetoothSocket?.let {
-            try {
-                Log.d(CONNECT_FRAGMENT_TEXT, "TEST4")
-                it.connect() // Initiates the connection
-                Log.d(CONNECT_FRAGMENT_TEXT, "TEST5")
-                // Connection successful, handle further logic here
-            } catch (e: IOException) {
-                e.printStackTrace()
-                // Handle connection failure
-            }
-        }
     }
 
 }

@@ -2,15 +2,9 @@ package nz.ac.uclive.ajs418.quickfire.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothServerSocket
-import android.bluetooth.BluetoothSocket
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,15 +12,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import nz.ac.uclive.ajs418.quickfire.BluetoothServerService
 import nz.ac.uclive.ajs418.quickfire.R
-import java.io.IOException
-import java.util.UUID
 
 class HomeFragment : Fragment() {
-    private val APP_NAME = "nz.ac.uclive.ajs418.quickfire"
-    private val REQUEST_BLUETOOTH_PERMISSION = 2
-    private val REQUEST_BLUETOOTH_DISCOVERABILITY = 3
-    val MY_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
+    private val REQUEST_BLUETOOTH_PERMISSION = 1
+    private val REQUEST_BLUETOOTH_DISCOVERABILITY = 2
+    private lateinit var bluetoothServerService: BluetoothServerService
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +34,7 @@ class HomeFragment : Fragment() {
         val createPartyButton = view.findViewById<Button>(R.id.createPartyButton)
         val joinPartyButton = view.findViewById<Button>(R.id.joinPartyButton)
         val soloPlayButton = view.findViewById<Button>(R.id.soloPlayButton)
+        bluetoothServerService = BluetoothServerService()
 
         createPartyButton.setOnClickListener {
             replaceWithConnect(false)
@@ -58,22 +51,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun enableDiscovery() {
-//        val bluetoothManager: BluetoothManager? = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
-//        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
-
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
-            // BLUETOOTH permission is already granted, proceed with accessing paired devices
             listenForIncomingConnections()
-            // Ensure Bluetooth is enabled
-//            if (bluetoothAdapter != null && bluetoothAdapter.isEnabled) {
-//                // Make the device discoverable
-//                val discoverableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
-//                    putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300)
-//                }
-//                startActivityForResult(discoverableIntent, REQUEST_BLUETOOTH_DISCOVERABILITY)
-//            }
         } else {
-            // BLUETOOTH permission is not granted, request it
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH), REQUEST_BLUETOOTH_PERMISSION)
         }
     }
@@ -87,40 +67,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun listenForIncomingConnections() {
-        Log.d("Home Fragment", "TestA")
-        val bluetoothManager: BluetoothManager? = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
-        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
-
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
-            // BLUETOOTH permission is already granted, proceed with accessing paired devices
-        } else {
-            // BLUETOOTH permission is not granted, request it
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH), REQUEST_BLUETOOTH_PERMISSION)
-        }
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
-            // BLUETOOTH permission is already granted, proceed with accessing paired devices
-        } else {
-            // BLUETOOTH permission is not granted, request it
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH_CONNECT), REQUEST_BLUETOOTH_PERMISSION)
-        }
-        Log.d("HomeFragment", "Listen")
-        val serverSocket: BluetoothServerSocket? = bluetoothAdapter?.listenUsingRfcommWithServiceRecord(APP_NAME, MY_UUID)
-        Log.d("HomeFragment", "ListenFinished?")
-
-        serverSocket?.let {
-            try {
-                Log.d("Home Fragment", "Test")
-                val socket: BluetoothSocket = it.accept() // Accepts incoming connections
-                Log.d("Home Fragment", socket.toString())
-                // Connection accepted, handle further logic here
-                Log.d("Home Fragment", "Test")
-            } catch (e: IOException) {
-                e.printStackTrace()
-                // Handle connection failure
-            }
-        }
+        bluetoothServerService.acceptConnections(requireContext(), requireActivity())
     }
-
 
     private fun replaceWithConnect(isMember: Boolean) {
         val bundle = Bundle()
