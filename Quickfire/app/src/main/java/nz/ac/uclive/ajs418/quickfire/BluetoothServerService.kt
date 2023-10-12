@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -30,7 +31,7 @@ class BluetoothServerService {
     private val MY_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
     private val APP_NAME = "nz.ac.uclive.ajs418.quickfire"
 
-    fun acceptConnections(context: Context, activity: Activity) {
+    fun acceptConnections(context: Context, activity: Activity, onSocketEstablished: () -> Unit) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val bluetoothPermission = Manifest.permission.BLUETOOTH
@@ -43,17 +44,22 @@ class BluetoothServerService {
                     // Request BLUETOOTH and BLUETOOTH_CONNECT permissions
                     ActivityCompat.requestPermissions(activity, arrayOf(bluetoothPermission, bluetoothConnectPermission), REQUEST_BLUETOOTH_PERMISSIONS)
                 }
-
+                // Show a toast message
+                activity.runOnUiThread {
+                    Toast.makeText(context, "Waiting for host to invite", Toast.LENGTH_SHORT).show()
+                }
                 val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
                 serverSocket = bluetoothAdapter?.listenUsingRfcommWithServiceRecord(APP_NAME, MY_UUID)
+
 
                 bluetoothSocket = serverSocket?.accept()
                 inputStream = bluetoothSocket?.inputStream
                 outputStream = bluetoothSocket?.outputStream
 
                 // Start reading data
-                writeData("Hello Server, I'm Client")
+                writeData("Hello Client, I'm Server")
                 readData()
+                onSocketEstablished()
             } catch (e: IOException) {
                 e.printStackTrace()
                 // Handle connection failure

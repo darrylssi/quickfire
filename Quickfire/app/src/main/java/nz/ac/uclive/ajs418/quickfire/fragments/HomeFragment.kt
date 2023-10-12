@@ -42,7 +42,6 @@ class HomeFragment : Fragment() {
 
         joinPartyButton.setOnClickListener {
             enableDiscovery()
-            replaceWithConnect(true)
         }
 
         soloPlayButton.setOnClickListener {
@@ -67,7 +66,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun listenForIncomingConnections() {
-        bluetoothServerService.acceptConnections(requireContext(), requireActivity())
+        bluetoothServerService.acceptConnections(requireContext(), requireActivity()) {
+            replaceWithConnect(true)
+        }
     }
 
     private fun replaceWithConnect(isMember: Boolean) {
