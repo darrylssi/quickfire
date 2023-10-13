@@ -54,7 +54,9 @@ class BluetoothClientService {
     }
 
     private fun useReceivedData(receivedData: String) {
-        // TODO
+        if (receivedData.startsWith("Server Name: ")) {
+            val serverName = receivedData.substringAfter("Server Name: ")
+        }
         Log.d("BluetoothServerService", receivedData)
     }
 
