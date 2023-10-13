@@ -2,6 +2,7 @@ package nz.ac.uclive.ajs418.quickfire
 
 import android.Manifest
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
@@ -93,6 +94,9 @@ class BluetoothClientService {
                     setStreams(bluetoothSocket.inputStream, bluetoothSocket.outputStream)
                 }
                 writeData("Hello Server, I'm Client")
+                val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+                val deviceName = bluetoothAdapter?.name
+                writeData("Client Name: $deviceName")
                 // Start reading data
                 readData()
             } catch (e: IOException) {

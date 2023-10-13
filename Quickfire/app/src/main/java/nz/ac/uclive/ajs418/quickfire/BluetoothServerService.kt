@@ -58,6 +58,9 @@ class BluetoothServerService {
 
                 // Start reading data
                 writeData("Hello Client, I'm Server")
+                val deviceName = bluetoothAdapter?.name
+                writeData("Server Name: $deviceName")
+                //start reading data
                 readData()
                 onSocketEstablished()
             } catch (e: IOException) {
