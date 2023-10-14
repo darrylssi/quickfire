@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
     private val connectFragment: Fragment = ConnectFragment()
     private val playFragment: Fragment = PlayFragment()
     private val matchesFragment: Fragment = MatchesFragment()
+    private val partyDetailsFragment: Fragment = PartyDetailsFragment()
     private val settingsFragment: Fragment = SettingsFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
