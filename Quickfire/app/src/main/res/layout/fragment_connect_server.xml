@@ -36,22 +36,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerText">
 
-        <EditText
-            android:id="@+id/partyNameField"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="15dp"
-            android:ems="10"
-            android:hint="@string/party_name"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:minHeight="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <Button
             android:id="@+id/enableDiscovery"
             android:layout_width="0dp"
@@ -64,21 +48,7 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/partyNameField" />
-
-        <Button
-            android:id="@+id/startMatchButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp"
-            android:backgroundTint="@color/purple_main"
-            android:text="@string/start_matching"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/partyPeopleText"
@@ -92,7 +62,7 @@
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addPersonButton" />
+            app:layout_constraintTop_toBottomOf="@+id/enableDiscovery" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="0dp"
@@ -101,7 +71,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/startMatchButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/partyPeopleText" />

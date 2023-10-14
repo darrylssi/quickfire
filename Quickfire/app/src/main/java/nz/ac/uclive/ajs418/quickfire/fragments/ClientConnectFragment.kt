@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ListView
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -65,20 +66,28 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
         val addButton = view.findViewById<Button>(R.id.addPersonButton)
         addButton.setOnClickListener {
             showPairedDevicesPopup()
+            enableStartButton(view)
         }
 
-        val arguments = arguments
-        if (arguments != null && arguments.getBoolean("isMember")) {
-            val startButton = view.findViewById<Button>(R.id.startMatchButton)
-            disableButton(startButton, view)
+        val startButton = view.findViewById<Button>(R.id.startMatchButton)
+
+        startButton.setOnClickListener {
+            val partyName = view.findViewById<EditText>(R.id.partyNameField)
+            val partNameText = partyName.text.toString()
+            sendData("party_name:$partNameText")
+            val partyMembers = ArrayList<Long>().apply {
+                add(clientUser.id)
+                add(serverUser.id)
+            }
+            party = Party(partNameText, partyMembers, arrayListOf()) //  Matches is initially empty
+            lifecycleScope.launch { partyViewModel.addParty(party) }
+            switchToClientPlayFragment(bluetoothClientService)
         }
     }
 
-    private fun disableButton(button: Button, view: View) {
-        button.isEnabled = false
-        button.isClickable = false
-        button.setBackgroundColor(ContextCompat.getColor(view.context, R.color.grey))
-        button.setTextColor(ContextCompat.getColor(view.context, R.color.white))
+    private fun enableStartButton( view: View) {
+        val startButton = view.findViewById<Button>(R.id.startMatchButton)
+        startButton.isEnabled = true
     }
 
     @Deprecated("Deprecated in Java")
@@ -161,15 +170,6 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
             val username = string.substringAfter("server_name:")
             serverUser = User(username, "SERVER")
             lifecycleScope.launch { userViewModel.addUser(serverUser) }
-        }
-        if (string.startsWith("party_name:")) {
-            val partyName = string.substringAfter("party_name:")
-            val partyMembers = ArrayList<Long>().apply {
-                add(clientUser.id)
-                add(serverUser.id)
-            }
-            party = Party(partyName, partyMembers, arrayListOf()) //  Matches is initially empty
-            lifecycleScope.launch { partyViewModel.addParty(party) }
         }
     }
 

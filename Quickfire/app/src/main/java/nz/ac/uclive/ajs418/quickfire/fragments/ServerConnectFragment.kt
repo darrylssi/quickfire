@@ -61,11 +61,6 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
             enableDiscovery()
         }
 
-        val arguments = arguments
-        if (arguments != null && arguments.getBoolean("isMember")) {
-            val startButton = view.findViewById<Button>(R.id.startMatchButton)
-            disableButton(startButton, view)
-        }
     }
 
     private fun disableButton(button: Button, view: View) {
@@ -134,11 +129,8 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
             }
             party = Party(partyName, partyMembers, arrayListOf()) //  Matches is initially empty
             lifecycleScope.launch { partyViewModel.addParty(party) }
+            switchToServerPlayFragment(bluetoothServerService)
         }
-    }
-
-    private fun sendData(data: String) {
-        bluetoothServerService.writeData(data)
     }
 
     private fun switchToServerPlayFragment(bluetoothServerService: BluetoothServerService) {
