@@ -23,10 +23,11 @@ import androidx.fragment.app.Fragment
 import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothClientService
 import nz.ac.uclive.ajs418.quickfire.R
+import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 
-class ConnectFragment : Fragment() {
+class ConnectFragment : Fragment(), BluetoothServiceCallback {
     private val REQUEST_BLUETOOTH_SCAN_PERMISSION = 1
     private val REQUEST_BLUETOOTH_PERMISSION = 2
     private val CONNECT_FRAGMENT_TEXT = "Connect Fragment"
@@ -50,6 +51,7 @@ class ConnectFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bluetoothClientService = BluetoothClientService()
+        bluetoothClientService.setCallback(this)
 
         val addButton = view.findViewById<Button>(R.id.addPersonButton)
         addButton.setOnClickListener {
@@ -138,6 +140,11 @@ class ConnectFragment : Fragment() {
 
         dialog.show()
     }
+
+    override fun onDataReceived(data: String) {
+        // Handle the received data here
+    }
+
 
 }
 

@@ -27,10 +27,15 @@ class BluetoothClientService {
     private var outputStream: OutputStream? = null
     private val REQUEST_BLUETOOTH_PERMISSIONS = 1
     val MY_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
+    private var callback: BluetoothServiceCallback? = null
 
     private fun setStreams(inStream: InputStream, outStream: OutputStream) {
         inputStream = inStream
         outputStream = outStream
+    }
+
+    fun setCallback(callback: BluetoothServiceCallback) {
+        this.callback = callback
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -44,7 +49,7 @@ class BluetoothClientService {
 
                     if (bytesRead != null && bytesRead > 0) {
                         val receivedData = String(buffer, 0, bytesRead)
-                        useReceivedData(receivedData)
+                        returnDataToFrag(receivedData)
                     }
                 }
             } catch (e: IOException) {
@@ -54,11 +59,9 @@ class BluetoothClientService {
         }
     }
 
-    private fun useReceivedData(receivedData: String) {
-        if (receivedData.startsWith("Server Name: ")) {
-            val serverName = receivedData.substringAfter("Server Name: ")
-        }
-        Log.d("BluetoothServerService", receivedData)
+    private fun returnDataToFrag(string: String) {
+        callback?.onDataReceived(string)
+        Log.d("BluetoothServerService", string)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
