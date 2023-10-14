@@ -143,6 +143,9 @@ class ConnectFragment : Fragment(), BluetoothServiceCallback {
         // Handle the received data here
     }
 
+    private fun sendData(data: String) {
+        bluetoothClientService.writeData(data)
+    }
 
 }
 

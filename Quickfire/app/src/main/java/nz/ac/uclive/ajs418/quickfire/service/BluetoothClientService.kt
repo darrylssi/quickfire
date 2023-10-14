@@ -65,7 +65,7 @@ class BluetoothClientService {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun writeData(data: String) {
+    fun writeData(data: String) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val bytes = data.toByteArray()

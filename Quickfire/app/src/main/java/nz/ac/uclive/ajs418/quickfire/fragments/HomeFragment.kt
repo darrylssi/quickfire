@@ -105,4 +105,8 @@ class HomeFragment : Fragment(), BluetoothServiceCallback {
         // Handle the received data here
     }
 
+    private fun sendData(data: String) {
+        bluetoothServerService.writeData(data)
+    }
+
 }
