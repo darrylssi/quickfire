@@ -24,7 +24,7 @@
             android:paddingVertical="15sp"
             android:text="@string/quickfire"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            style="@style/TextColor"
             android:textSize="50sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
