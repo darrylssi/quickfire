@@ -1,6 +1,7 @@
 package nz.ac.uclive.ajs418.quickfire.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
@@ -10,14 +11,21 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.database.QuickfireDatabase
 import nz.ac.uclive.ajs418.quickfire.entity.Media
+import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.repository.MediaRepository
+import nz.ac.uclive.ajs418.quickfire.repository.UserRepository
+import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 import java.util.*
 
-class PlayFragment : Fragment() {
+class PlayFragment() : Fragment() {
 
     // UI elements
     private lateinit var posterView: ImageView
@@ -56,7 +64,8 @@ class PlayFragment : Fragment() {
         noButton = view.findViewById(R.id.noButton)
 
         // Initialize the MediaRepository with the MediaDao
-        mediaRepository = MediaRepository(QuickfireDatabase.getDatabase(requireContext()).mediaDao())
+        val mediaDao = QuickfireDatabase.getDatabase(requireContext()).mediaDao()
+        mediaRepository = MediaRepository(mediaDao)
 
         // Load initial random media
         loadRandomMedia()
@@ -74,6 +83,7 @@ class PlayFragment : Fragment() {
         setupSwipeGestureDetection()
     }
 
+
     // Function to load a random media item
     private fun loadRandomMedia() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -81,6 +91,8 @@ class PlayFragment : Fragment() {
             displayMedia(currentMedia)
         }
     }
+
+
 
     // Function to set up swipe gesture detection for posterView
     private fun setupSwipeGestureDetection() {
