@@ -80,13 +80,15 @@ class BluetoothClientService {
             try {
                 val bluetoothPermission = Manifest.permission.BLUETOOTH
                 val bluetoothConnectPermission = Manifest.permission.BLUETOOTH_CONNECT
+                val bluetoothScanPermission = Manifest.permission.BLUETOOTH_SCAN
 
                 if (ContextCompat.checkSelfPermission(context, bluetoothPermission) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(context, bluetoothConnectPermission) == PackageManager.PERMISSION_GRANTED) {
+                    ContextCompat.checkSelfPermission(context, bluetoothConnectPermission) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(context, bluetoothScanPermission) == PackageManager.PERMISSION_GRANTED) {
                     // BLUETOOTH and BLUETOOTH_CONNECT permissions are already granted, proceed with accessing paired devices
                 } else {
                     // Request BLUETOOTH and BLUETOOTH_CONNECT permissions
-                    ActivityCompat.requestPermissions(activity, arrayOf(bluetoothPermission, bluetoothConnectPermission), REQUEST_BLUETOOTH_PERMISSIONS)
+                    ActivityCompat.requestPermissions(activity, arrayOf(bluetoothPermission, bluetoothConnectPermission, bluetoothScanPermission), REQUEST_BLUETOOTH_PERMISSIONS)
                 }
 
                 val bluetoothSocket: BluetoothSocket? = device.createRfcommSocketToServiceRecord(MY_UUID)

@@ -70,15 +70,15 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    fun getUserViewModel(): UserViewModel {
+    fun getUserViewModelInstance(): UserViewModel {
         return userViewModel
     }
 
-    fun getPartyViewModel(): PartyViewModel {
+    fun getPartyViewModelInstance(): PartyViewModel {
         return partyViewModel
     }
 
-    fun getLikeViewModel(): LikeViewModel {
+    fun getLikeViewModelInstance(): LikeViewModel {
         return likeViewModel
     }
 

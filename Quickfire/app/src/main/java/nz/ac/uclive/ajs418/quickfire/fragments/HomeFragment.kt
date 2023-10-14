@@ -26,7 +26,7 @@ class HomeFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        userViewModel = (requireActivity() as MainActivity).getUserViewModel()
+        userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
     }
 
     override fun onCreateView(

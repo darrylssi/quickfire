@@ -35,7 +35,7 @@ class ConnectFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        userViewModel = (requireActivity() as MainActivity).getUserViewModel()
+        userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
     }
 
     override fun onCreateView(
@@ -93,10 +93,6 @@ class ConnectFragment : Fragment() {
 
         val listView = dialog.findViewById<ListView>(R.id.device_list)
 
-        // Get the set of paired devices
-        val bluetoothManager: BluetoothManager? = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
-        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
-
         // BLUETOOTH PERMISSION
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
             // BLUETOOTH permission is already granted, proceed with accessing paired devices
@@ -112,6 +108,11 @@ class ConnectFragment : Fragment() {
             // BLUETOOTH permission is not granted, request it
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.BLUETOOTH_CONNECT), REQUEST_BLUETOOTH_PERMISSION)
         }
+
+        // Get the set of paired devices
+        val bluetoothManager: BluetoothManager? = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager?
+        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
+
         val pairedDevices = bluetoothAdapter?.bondedDevices
 
         // Convert the set of Bluetooth devices to a list of strings (device names)
