@@ -40,6 +40,7 @@ class BluetoothClientService {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun readData() {
+        Log.d("BCS", "read")
         val buffer = ByteArray(1024)
 
         GlobalScope.launch(Dispatchers.IO) {
@@ -60,8 +61,9 @@ class BluetoothClientService {
     }
 
     private fun returnDataToFrag(string: String) {
-        callback?.onDataReceived(string)
         Log.d("BluetoothServerService", string)
+        callback?.onDataReceived(string)
+
     }
 
     @OptIn(DelicateCoroutinesApi::class)

@@ -142,7 +142,8 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
         dialog.show()
     }
 
-    override fun onDataReceived(data: String) {
+    override fun onDataReceived(string: String) {
+        Log.d("ClientConnectFragment", string)
         // Handle the received data here
     }
 
