@@ -20,9 +20,13 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothClientService
 import nz.ac.uclive.ajs418.quickfire.R
+import nz.ac.uclive.ajs418.quickfire.entity.Party
+import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
@@ -33,6 +37,10 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
     private lateinit var bluetoothClientService: BluetoothClientService
     private lateinit var userViewModel: UserViewModel
     private lateinit var partyViewModel: PartyViewModel
+    private var serverUser = User("", "")
+    private var clientUser = User("", "")
+    private var party = Party("", arrayListOf(), arrayListOf())
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -138,19 +146,31 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
                 dialog.dismiss()
             }
         }
-
         dialog.show()
     }
 
     override fun onDataReceived(string: String) {
         Log.d("ClientConnectFragment", string)
         // Handle the received data here
-        // If starts with 'client_name:'
-        // val user = deviceName?.let { User(it, "CLIENT") }
-        // lifecycleScope.launch { userViewModel.addUser(user) }
-        // If starts with 'server_name:'
-        // val user = deviceName?.let { User(it, "SERVER") }
-        // lifecycleScope.launch { userViewModel.addUser(user) }
+        if (string.startsWith("client_name:")) {
+            val username = string.substringAfter("client_name:")
+            clientUser = User(username, "CLIENT")
+            lifecycleScope.launch { userViewModel.addUser(clientUser) }
+        }
+        if (string.startsWith("server_name:")) {
+            val username = string.substringAfter("server_name:")
+            serverUser = User(username, "SERVER")
+            lifecycleScope.launch { userViewModel.addUser(serverUser) }
+        }
+        if (string.startsWith("party_name:")) {
+            val partyName = string.substringAfter("party_name:")
+            val partyMembers = ArrayList<Long>().apply {
+                add(clientUser.id)
+                add(serverUser.id)
+            }
+            party = Party(partyName, partyMembers, arrayListOf()) //  Matches is initially empty
+            lifecycleScope.launch { partyViewModel.addParty(party) }
+        }
     }
 
     private fun sendData(data: String) {

@@ -14,6 +14,7 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun addUser(user: User) = viewModelScope.launch {
         userRepository.insert(user)
     }
+
 }
 
 class UserViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {
