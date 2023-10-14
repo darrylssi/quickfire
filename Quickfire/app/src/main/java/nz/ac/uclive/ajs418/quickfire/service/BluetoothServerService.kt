@@ -31,6 +31,11 @@ class BluetoothServerService {
 
     private val MY_UUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb")
     private val APP_NAME = "nz.ac.uclive.ajs418.quickfire"
+    private var callback: BluetoothServiceCallback? = null
+
+    fun setCallback(callback: BluetoothServiceCallback) {
+        this.callback = callback
+    }
 
     fun acceptConnections(context: Context, activity: Activity, onSocketEstablished: () -> Unit) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -83,7 +88,7 @@ class BluetoothServerService {
 
                     if (bytesRead != null && bytesRead > 0) {
                         val receivedData = String(buffer, 0, bytesRead)
-                        useReceivedData(receivedData)
+                        returnDataToFrag(receivedData)
                     }
                 }
             } catch (e: IOException) {
@@ -93,11 +98,9 @@ class BluetoothServerService {
         }
     }
 
-    private fun useReceivedData(receivedData: String) {
-        if (receivedData.startsWith("Client Name: ")) {
-            val clientName = receivedData.substringAfter("Client Name: ")
-        }
-        Log.d("BluetoothServerService", receivedData)
+    private fun returnDataToFrag(string: String) {
+        callback?.onDataReceived(string)
+        Log.d("BluetoothServerService", string)
     }
 
     @OptIn(DelicateCoroutinesApi::class)

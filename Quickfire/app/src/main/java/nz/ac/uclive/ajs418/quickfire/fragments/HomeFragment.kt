@@ -16,9 +16,10 @@ import androidx.core.content.ContextCompat
 import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServerService
 import nz.ac.uclive.ajs418.quickfire.R
+import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), BluetoothServiceCallback {
     private val REQUEST_BLUETOOTH_PERMISSION = 1
     private val REQUEST_BLUETOOTH_DISCOVERABILITY = 2
     private lateinit var bluetoothServerService: BluetoothServerService
@@ -44,6 +45,7 @@ class HomeFragment : Fragment() {
         val joinPartyButton = view.findViewById<Button>(R.id.joinPartyButton)
         val soloPlayButton = view.findViewById<Button>(R.id.soloPlayButton)
         bluetoothServerService = BluetoothServerService()
+        bluetoothServerService.setCallback(this)
 
         createPartyButton.setOnClickListener {
             replaceWithConnect(false)
@@ -98,6 +100,10 @@ class HomeFragment : Fragment() {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, playFragment)
             .commit()
+    }
+
+    override fun onDataReceived(data: String) {
+        // Handle the received data here
     }
 
 }
