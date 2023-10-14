@@ -114,4 +114,14 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
     private fun sendData(data: String) {
         bluetoothServerService.writeData(data)
     }
+
+    private fun switchToServerPlayFragment(bluetoothServerService: BluetoothServerService) {
+        val serverPlayFragment = ServerPlayFragment()
+        serverPlayFragment.setBluetoothServerService(bluetoothServerService)
+
+        val fragmentTransaction = parentFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.fragmentContainer, serverPlayFragment)
+            .addToBackStack(null) // Optional: Adds the transaction to the back stack
+            .commit()
+    }
 }
