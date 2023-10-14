@@ -14,4 +14,8 @@ class MediaRepository (private val mediaDao: MediaDao){
         mediaDao.insert(media)
     }
 
+    fun getRandomMedia(): Media? {
+        return mediaDao.getRandomMedia()
+    }
+
 }

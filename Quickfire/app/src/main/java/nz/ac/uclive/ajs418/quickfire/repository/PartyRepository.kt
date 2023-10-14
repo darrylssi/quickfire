@@ -13,4 +13,12 @@ class PartyRepository(private val partyDao: PartyDao) {
     suspend fun insert(party: Party) {
         partyDao.insert(party)
     }
+
+    suspend fun getPartyById(partyId: Long): Party? {
+        return partyDao.getPartyById(partyId)
+    }
+
+    suspend fun updateParty(party: Party) {
+        partyDao.update(party)
+    }
 }
