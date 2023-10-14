@@ -6,24 +6,25 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import nz.ac.uclive.ajs418.quickfire.entity.Party
+import nz.ac.uclive.ajs418.quickfire.entity.Like
+import nz.ac.uclive.ajs418.quickfire.repository.LikeRepository
 import nz.ac.uclive.ajs418.quickfire.repository.PartyRepository
 import java.lang.IllegalArgumentException
 
-class PartyViewModel(private val partyRepository: PartyRepository) : ViewModel() {
-    val parties: LiveData<List<Party>> = partyRepository.parties.asLiveData()
+class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
+    var likes: LiveData<List<Like>> = likeRepository.likes.asLiveData()
 
-    fun addParty(party: Party) = viewModelScope.launch {
-        partyRepository.insert(party)
+    fun addLike(like: Like) = viewModelScope.launch {
+        likeRepository.insert(like)
     }
-
 }
 
-class PartyViewModelFactory(private val partyRepository: PartyRepository) : ViewModelProvider.Factory {
+
+class LikeViewModelFactory(private val likeRepository: LikeRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(PartyViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return PartyViewModel(partyRepository) as T
+            return LikeViewModel(likeRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
