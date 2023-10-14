@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ClientConnectFragment">
+    tools:context=".fragments.ServerConnectFragment">
 
     <TextView
         android:id="@+id/headerText"
@@ -53,14 +53,14 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/addPersonButton"
+            android:id="@+id/enableDiscovery"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="15dp"
             android:backgroundTint="@color/purple_main"
-            android:text="@string/add_person"
+            android:text="@string/make_discoverable"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

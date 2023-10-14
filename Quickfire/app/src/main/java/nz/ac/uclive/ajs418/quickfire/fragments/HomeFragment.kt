@@ -23,25 +23,51 @@ class HomeFragment : Fragment() {
 
         val createPartyButton = view.findViewById<Button>(R.id.createPartyButton)
         val joinPartyButton = view.findViewById<Button>(R.id.joinPartyButton)
+        val soloPlayButton = view.findViewById<Button>(R.id.soloPlayButton)
 
         createPartyButton.setOnClickListener {
-            replaceWithConnect(false)
+            replaceWithClientConnect(false)
         }
 
         joinPartyButton.setOnClickListener {
-            replaceWithConnect(true)
+            replaceWithServerConnect(false)
+        }
+
+        soloPlayButton.setOnClickListener {
+            replaceWithPlay()
         }
     }
 
-    private fun replaceWithConnect(isMember: Boolean) {
+
+    private fun replaceWithClientConnect(isMember: Boolean) {
         val bundle = Bundle()
         bundle.putBoolean("isMember", isMember)
 
         val fragmentTransaction = parentFragmentManager.beginTransaction()
-        val connectFragment = ConnectFragment()
-        connectFragment.arguments = bundle
+        val clientConnectFragment = ClientConnectFragment()
+        clientConnectFragment.arguments = bundle
 
-        fragmentTransaction.replace(R.id.fragmentContainer, connectFragment)
+        fragmentTransaction.replace(R.id.fragmentContainer, clientConnectFragment)
+            .commit()
+    }
+
+    private fun replaceWithServerConnect(isMember: Boolean) {
+        val bundle = Bundle()
+        bundle.putBoolean("isMember", isMember)
+
+        val fragmentTransaction = parentFragmentManager.beginTransaction()
+        val serverConnectFragment = ServerConnectFragment()
+       serverConnectFragment.arguments = bundle
+
+        fragmentTransaction.replace(R.id.fragmentContainer, serverConnectFragment)
+            .commit()
+    }
+
+    private fun replaceWithPlay() {
+        val playFragment = PlayFragment()
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, playFragment)
             .commit()
     }
 
