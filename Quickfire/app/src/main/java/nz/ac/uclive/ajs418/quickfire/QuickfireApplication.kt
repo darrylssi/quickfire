@@ -3,10 +3,14 @@ package nz.ac.uclive.ajs418.quickfire
 import android.app.Application
 import androidx.room.Room
 import nz.ac.uclive.ajs418.quickfire.database.QuickfireDatabase
+import nz.ac.uclive.ajs418.quickfire.repository.LikeRepository
+import nz.ac.uclive.ajs418.quickfire.repository.PartyRepository
 import nz.ac.uclive.ajs418.quickfire.repository.UserRepository
 
 class QuickfireApplication : Application() {
-    val userRepository by lazy {UserRepository(database.userDao()) }
+    val userRepository by lazy { UserRepository(database.userDao()) }
+    val partyRepository by lazy { PartyRepository(database.partyDao()) }
+    val likeRepository by lazy { LikeRepository(database.likeDao()) }
 
     companion object {
         lateinit var database: QuickfireDatabase
