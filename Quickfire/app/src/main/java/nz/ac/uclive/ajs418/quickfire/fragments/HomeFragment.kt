@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import nz.ac.uclive.ajs418.quickfire.BluetoothServerService
+import nz.ac.uclive.ajs418.quickfire.service.BluetoothServerService
 import nz.ac.uclive.ajs418.quickfire.R
 
 class HomeFragment : Fragment() {

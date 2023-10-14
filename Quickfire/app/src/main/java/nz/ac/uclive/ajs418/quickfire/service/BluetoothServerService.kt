@@ -1,4 +1,4 @@
-package nz.ac.uclive.ajs418.quickfire
+package nz.ac.uclive.ajs418.quickfire.service
 
 import android.Manifest
 import android.app.Activity
