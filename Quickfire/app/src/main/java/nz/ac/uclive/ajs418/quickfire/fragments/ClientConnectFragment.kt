@@ -145,6 +145,12 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
     override fun onDataReceived(string: String) {
         Log.d("ClientConnectFragment", string)
         // Handle the received data here
+        // If starts with 'client_name:'
+        // val user = deviceName?.let { User(it, "CLIENT") }
+        // lifecycleScope.launch { userViewModel.addUser(user) }
+        // If starts with 'server_name:'
+        // val user = deviceName?.let { User(it, "SERVER") }
+        // lifecycleScope.launch { userViewModel.addUser(user) }
     }
 
     private fun sendData(data: String) {

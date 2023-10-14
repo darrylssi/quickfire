@@ -104,8 +104,8 @@ class BluetoothClientService {
                 writeData("Hello Server, I'm Client")
                 val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
                 val deviceName = bluetoothAdapter?.name
-                val user = deviceName?.let { User(it, "CLIENT") }
-                writeData("Client Name: $deviceName")
+                writeData("client_name:$deviceName")
+                returnDataToFrag("client_name:$deviceName")
                 // Start reading data
                 readData()
             } catch (e: IOException) {

@@ -107,8 +107,16 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
         }
     }
 
-    override fun onDataReceived(data: String) {
+    override fun onDataReceived(string: String) {
         // Handle the received data here
+        // If string starts with 'client_name:'
+        // val user = client_name?.let { User(it, "CLIENT") }
+        // lifecycleScope.launch { userViewModel.addUser(user) }
+        // If string starts with 'server_name:'
+        // val user = server_name?.let { User(it, "SERVER") }
+        // lifecycleScope.launch { userViewModel.addUser(user) }
+        // If string starts with 'party_name:'
+        // val party = party_name?.let { Party(it, members, matches }
     }
 
     private fun sendData(data: String) {

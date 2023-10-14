@@ -8,8 +8,7 @@ import androidx.room.PrimaryKey
 class Party (
     @ColumnInfo var name: String,
     @ColumnInfo var members: ArrayList<Long>,
-    @ColumnInfo var matches: ArrayList<Long>,
-    @ColumnInfo var media_type: Boolean?
+    @ColumnInfo var matches: ArrayList<Long>
         ) {
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 }
