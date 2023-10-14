@@ -28,9 +28,7 @@ import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 
 class ConnectFragment : Fragment(), BluetoothServiceCallback {
-    private val REQUEST_BLUETOOTH_SCAN_PERMISSION = 1
-    private val REQUEST_BLUETOOTH_PERMISSION = 2
-    private val CONNECT_FRAGMENT_TEXT = "Connect Fragment"
+    private val REQUEST_BLUETOOTH_PERMISSION = 1
     private lateinit var bluetoothClientService: BluetoothClientService
     private lateinit var userViewModel: UserViewModel
 
@@ -77,12 +75,12 @@ class ConnectFragment : Fragment(), BluetoothServiceCallback {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
-            REQUEST_BLUETOOTH_SCAN_PERMISSION -> {
+            REQUEST_BLUETOOTH_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //Something something something
                 } else {
                     // Permission denied, handle this case (show a message, ask again, etc.)
-                    Log.d(CONNECT_FRAGMENT_TEXT, "Permission Denied to Scan")
+                    Log.d("Connect Fragment", "Permission Denied to Scan")
                     return
                 }
             }

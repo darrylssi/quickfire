@@ -21,7 +21,6 @@ import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 class HomeFragment : Fragment(), BluetoothServiceCallback {
     private val REQUEST_BLUETOOTH_PERMISSION = 1
-    private val REQUEST_BLUETOOTH_DISCOVERABILITY = 2
     private lateinit var bluetoothServerService: BluetoothServerService
     private lateinit var userViewModel: UserViewModel
 
@@ -70,7 +69,7 @@ class HomeFragment : Fragment(), BluetoothServiceCallback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_BLUETOOTH_DISCOVERABILITY && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_BLUETOOTH_PERMISSION && resultCode == Activity.RESULT_OK) {
             // Start listening for incoming connections
             listenForIncomingConnections()
         }
