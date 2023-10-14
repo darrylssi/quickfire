@@ -20,16 +20,19 @@ import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServerService
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
+import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
     private val REQUEST_BLUETOOTH_PERMISSION = 1
     private lateinit var bluetoothServerService: BluetoothServerService
     private lateinit var userViewModel: UserViewModel
+    private lateinit var partyViewModel: PartyViewModel
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
+        partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
     }
 
     override fun onCreateView(
