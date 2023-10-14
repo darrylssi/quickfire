@@ -14,6 +14,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import nz.ac.uclive.ajs418.quickfire.entity.User
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -98,6 +99,7 @@ class BluetoothClientService {
                 writeData("Hello Server, I'm Client")
                 val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
                 val deviceName = bluetoothAdapter?.name
+                val user = deviceName?.let { User(it, "CLIENT") }
                 writeData("Client Name: $deviceName")
                 // Start reading data
                 readData()

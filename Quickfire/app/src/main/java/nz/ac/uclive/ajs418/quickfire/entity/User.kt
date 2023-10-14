@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "user")
 class User (
     @ColumnInfo var name: String,
-    @ColumnInfo var themePreference: String
+    @ColumnInfo var bluetoothType: String
 ) {
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 }
