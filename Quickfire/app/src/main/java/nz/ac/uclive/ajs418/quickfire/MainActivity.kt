@@ -9,6 +9,8 @@ import nz.ac.uclive.ajs418.quickfire.databinding.ActivityMainBinding
 import nz.ac.uclive.ajs418.quickfire.fragments.*
 import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModelFactory
+import nz.ac.uclive.ajs418.quickfire.viewmodel.MediaViewModel
+import nz.ac.uclive.ajs418.quickfire.viewmodel.MediaViewModelFactory
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModelFactory
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
@@ -37,6 +39,10 @@ class MainActivity : AppCompatActivity() {
     private val likeViewModel: LikeViewModel by lazy {
         ViewModelProvider(this, LikeViewModelFactory((application as QuickfireApplication).likeRepository))
             .get(LikeViewModel::class.java)
+    }
+    private val mediaViewModel: MediaViewModel by lazy {
+        ViewModelProvider(this, MediaViewModelFactory((application as QuickfireApplication).mediaRepository))
+            .get(MediaViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +86,10 @@ class MainActivity : AppCompatActivity() {
 
     fun getLikeViewModelInstance(): LikeViewModel {
         return likeViewModel
+    }
+
+    fun getMediaViewModelInstance(): MediaViewModel {
+        return mediaViewModel
     }
 
 }

@@ -6,7 +6,7 @@ import nz.ac.uclive.ajs418.quickfire.entity.Media
 import kotlinx.coroutines.flow.Flow
 
 class MediaRepository (private val mediaDao: MediaDao){
-    val media: Flow<List<Media>> = mediaDao.getAll()
+    val mediaList: Flow<List<Media>> = mediaDao.getAll()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
