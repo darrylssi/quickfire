@@ -150,6 +150,16 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
         bluetoothClientService.writeData(data)
     }
 
+    private fun switchToClientPlayFragment(bluetoothClientService: BluetoothClientService) {
+        val clientPlayFragment = ClientPlayFragment()
+        clientPlayFragment.setBluetoothClientService(bluetoothClientService)
+
+        val fragmentTransaction = parentFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.fragmentContainer, clientPlayFragment)
+            .addToBackStack(null) // Optional: Adds the transaction to the back stack
+            .commit()
+    }
+
 }
 
 
