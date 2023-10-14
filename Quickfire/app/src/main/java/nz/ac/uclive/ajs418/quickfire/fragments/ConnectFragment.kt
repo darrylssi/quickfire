@@ -109,7 +109,9 @@ class ConnectFragment : Fragment() {
             startMatchButton = view.findViewById(R.id.startMatchButton)
             startMatchButton.setOnClickListener {
                 // Create a new party with the current user as the initiator
-                val party = Party("Party Name", listOf(currentUser.id), emptyList())
+                val party = Party("Party Name", arrayListOf(currentUser.id) ,
+                    arrayListOf()
+                )
 
                 // Start a coroutine to insert the party into the database
                 GlobalScope.launch(Dispatchers.IO) {
