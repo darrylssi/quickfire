@@ -21,4 +21,5 @@
     <string name="movie">Movie</string>
     <string name="paired_devices">Paired Devices</string>
     <string name="solo_play">Solo Play</string>
+    <string name="make_discoverable">Make Discoverable</string>
 </resources>

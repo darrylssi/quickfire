@@ -27,7 +27,7 @@ import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 
-class ConnectFragment : Fragment(), BluetoothServiceCallback {
+class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
     private val REQUEST_BLUETOOTH_PERMISSION = 1
     private lateinit var bluetoothClientService: BluetoothClientService
     private lateinit var userViewModel: UserViewModel

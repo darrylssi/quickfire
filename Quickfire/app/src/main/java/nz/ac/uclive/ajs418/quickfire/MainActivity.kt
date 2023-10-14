@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     // Initializes the four fragments
     private val homeFragment: Fragment = HomeFragment()
-    private val connectFragment: Fragment = ConnectFragment()
+    private val clientConnectFragment: Fragment = ClientConnectFragment()
     private val playFragment: Fragment = PlayFragment()
     private val matchesFragment: Fragment = MatchesFragment()
     private val settingsFragment: Fragment = SettingsFragment()
