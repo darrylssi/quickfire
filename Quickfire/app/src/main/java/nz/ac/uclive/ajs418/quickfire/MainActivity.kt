@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import nz.ac.uclive.ajs418.quickfire.databinding.ActivityMainBinding
 import nz.ac.uclive.ajs418.quickfire.fragments.*
+import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModel
+import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModelFactory
+import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
+import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModelFactory
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModelFactory
 
@@ -25,6 +29,14 @@ class MainActivity : AppCompatActivity() {
     private val userViewModel: UserViewModel by lazy {
         ViewModelProvider(this, UserViewModelFactory((application as QuickfireApplication).userRepository))
             .get(UserViewModel::class.java)
+    }
+    private val partyViewModel: PartyViewModel by lazy {
+        ViewModelProvider(this, PartyViewModelFactory((application as QuickfireApplication).partyRepository))
+            .get(PartyViewModel::class.java)
+    }
+    private val likeViewModel: LikeViewModel by lazy {
+        ViewModelProvider(this, LikeViewModelFactory((application as QuickfireApplication).likeRepository))
+            .get(LikeViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +72,14 @@ class MainActivity : AppCompatActivity() {
 
     fun getUserViewModel(): UserViewModel {
         return userViewModel
+    }
+
+    fun getPartyViewModel(): PartyViewModel {
+        return partyViewModel
+    }
+
+    fun getLikeViewModel(): LikeViewModel {
+        return likeViewModel
     }
 
 }
