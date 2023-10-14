@@ -20,8 +20,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothClientService
 import nz.ac.uclive.ajs418.quickfire.R
+import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 
 class ConnectFragment : Fragment() {
@@ -29,6 +31,12 @@ class ConnectFragment : Fragment() {
     private val REQUEST_BLUETOOTH_PERMISSION = 2
     private val CONNECT_FRAGMENT_TEXT = "Connect Fragment"
     private lateinit var bluetoothClientService: BluetoothClientService
+    private lateinit var userViewModel: UserViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        userViewModel = (requireActivity() as MainActivity).getUserViewModel()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

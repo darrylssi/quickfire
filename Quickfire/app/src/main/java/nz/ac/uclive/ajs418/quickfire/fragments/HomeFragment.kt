@@ -2,6 +2,7 @@ package nz.ac.uclive.ajs418.quickfire.fragments
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -12,13 +13,21 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServerService
 import nz.ac.uclive.ajs418.quickfire.R
+import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 class HomeFragment : Fragment() {
     private val REQUEST_BLUETOOTH_PERMISSION = 1
     private val REQUEST_BLUETOOTH_DISCOVERABILITY = 2
     private lateinit var bluetoothServerService: BluetoothServerService
+    private lateinit var userViewModel: UserViewModel
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        userViewModel = (requireActivity() as MainActivity).getUserViewModel()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

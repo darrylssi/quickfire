@@ -3,9 +3,12 @@ package nz.ac.uclive.ajs418.quickfire
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import nz.ac.uclive.ajs418.quickfire.databinding.ActivityMainBinding
 import nz.ac.uclive.ajs418.quickfire.fragments.*
+import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
+import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +21,11 @@ class MainActivity : AppCompatActivity() {
     private val playFragment: Fragment = PlayFragment()
     private val matchesFragment: Fragment = MatchesFragment()
     private val settingsFragment: Fragment = SettingsFragment()
+
+    private val userViewModel: UserViewModel by lazy {
+        ViewModelProvider(this, UserViewModelFactory((application as QuickfireApplication).userRepository))
+            .get(UserViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +56,10 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
+    }
+
+    fun getUserViewModel(): UserViewModel {
+        return userViewModel
     }
 
 }
