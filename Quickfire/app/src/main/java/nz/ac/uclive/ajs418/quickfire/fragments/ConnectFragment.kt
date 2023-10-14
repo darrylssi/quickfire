@@ -35,13 +35,14 @@ import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 class ConnectFragment : Fragment() {
 
-    private val REQUEST_ENABLE_BT = 1
-    private val REQUEST_BLUETOOTH_SCAN_PERMISSION = 2
-    private val CONNECT_FRAGMENT_TEXT = "Connect Fragment"
     private lateinit var partyRepository: PartyRepository
     private lateinit var userViewModel: UserViewModel
     private lateinit var currentUser: User
     private lateinit var startMatchButton: Button
+
+    private val REQUEST_ENABLE_BT = 1
+    private val REQUEST_BLUETOOTH_SCAN_PERMISSION = 2
+    private val CONNECT_FRAGMENT_TEXT = "Connect Fragment"
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             Log.d("ConnectFragment", "test")
@@ -93,9 +94,12 @@ class ConnectFragment : Fragment() {
         val userDao: UserDao = QuickfireDatabase.getDatabase(requireContext()).userDao()
         val userRepository: UserRepository by lazy { UserRepository(userDao) }
         partyRepository = PartyRepository(QuickfireDatabase.getDatabase(requireContext()).partyDao())
+        userViewModel = UserViewModel(userRepository)
+
+
 
         // Load or create the current user
-        val usersLiveData: LiveData<List<User>> = userRepository.users
+        val usersLiveData: LiveData<List<User>> = userViewModel.users
         usersLiveData.observe(viewLifecycleOwner, { users ->
             if (users.isNotEmpty()) {
                 currentUser = users[0]

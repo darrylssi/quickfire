@@ -10,7 +10,7 @@ import nz.ac.uclive.ajs418.quickfire.repository.UserRepository
 
 class UserViewModel(private val userRepository: UserRepository): ViewModel() {
 
-//    val users: LiveData<List<User>> = userRepository.users.asLiveData()
+    val users: LiveData<List<User>> = userRepository.users.asLiveData()
 
     fun addUser(user: User) = viewModelScope.launch {
         userRepository.insert(user)

@@ -8,7 +8,7 @@ import nz.ac.uclive.ajs418.quickfire.dao.UserDao
 import nz.ac.uclive.ajs418.quickfire.entity.User
 
 class UserRepository(private val userDao: UserDao) {
-    val users: LiveData<List<User>> = userDao.getAll().asLiveData()
+    val users: Flow<List<User>> = userDao.getAll()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
