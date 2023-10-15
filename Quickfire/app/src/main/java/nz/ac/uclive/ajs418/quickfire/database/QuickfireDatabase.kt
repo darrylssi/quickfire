@@ -30,7 +30,9 @@ abstract class QuickfireDatabase : RoomDatabase() {
                     context.applicationContext,
                     QuickfireDatabase::class.java,
                     "like_database"
-                ).build()
+                )
+                    .addCallback(PrepopulateRoomCallback(context))
+                    .build()
                 INSTANCE = instance
                 instance
             }
