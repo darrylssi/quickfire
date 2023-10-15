@@ -1,0 +1,42 @@
+<!-- fragment_test.xml -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.MatchesFragment">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/purple_main"
+        android:fontFamily="cursive"
+        android:paddingVertical="15sp"
+        android:text="Matches"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/partyRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:padding="16dp"
+        android:clipToPadding="false"
+        android:background="@android:color/background_light"
+        android:scrollbars="vertical"
+        android:scrollbarStyle="outsideOverlay"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/item_party" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
