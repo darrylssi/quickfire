@@ -18,4 +18,8 @@ class MediaRepository (private val mediaDao: MediaDao){
         return mediaDao.getRandomMedia()
     }
 
+    fun getMediaById(mediaId: Long): Media? {
+        return mediaDao.getMediaById(mediaId)
+    }
+
 }

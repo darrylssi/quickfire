@@ -15,6 +15,10 @@ class MediaViewModel (private val mediaRepository: MediaRepository) : ViewModel(
     fun addMedia(media: Media) = viewModelScope.launch {
         mediaRepository.insert(media)
     }
+
+    fun getById(mediaId: Long): Media? {
+        return mediaRepository.getMediaById(mediaId)
+    }
 }
 
 class MediaViewModelFactory(private val mediaRepository: MediaRepository) : ViewModelProvider.Factory {

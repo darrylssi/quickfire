@@ -12,18 +12,27 @@ import java.lang.IllegalArgumentException
 
 class PartyViewModel(private val partyRepository: PartyRepository) : ViewModel() {
     val parties: LiveData<List<Party>> = partyRepository.parties.asLiveData()
-    var currentId = 0L
+    var currentPartyName = ""
+    var currentPartyId = 0L
 
     fun addParty(party: Party) = viewModelScope.launch {
         partyRepository.insert(party)
     }
 
-    fun setCurrentParty(partyId : Long) {
-        currentId = partyId
+    fun setCurrentName(partyName : String) {
+        currentPartyName = partyName
+    }
+
+    fun setCurrentId(partyId : Long) {
+        currentPartyId = partyId
     }
 
     fun addMatchToParty(partyId: Long, mediaId: Long) = viewModelScope.launch {
         partyRepository.addMatch(partyId, mediaId)
+    }
+
+    suspend fun getPartyByName(partyName : String): Party? {
+        return partyRepository.getPartyByName(currentPartyName)
     }
 
 }

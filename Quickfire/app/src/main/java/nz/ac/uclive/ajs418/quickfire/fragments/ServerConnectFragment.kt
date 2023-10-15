@@ -154,7 +154,7 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
                 }
                 party = Party(partyName, partyMembers, arrayListOf()) //  Matches is initially empty
                 lifecycleScope.launch { partyViewModel.addParty(party) }
-                lifecycleScope.launch { partyViewModel.setCurrentParty(party.id) }
+                lifecycleScope.launch { partyViewModel.setCurrentName(party.name) }
                 switchToServerPlayFragment(bluetoothServerService)
             }
         }
@@ -162,7 +162,7 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
 
     private suspend fun getUserByName(name : String) : User? {
         return withContext(coroutineScope.coroutineContext + Dispatchers.IO) {
-            userViewModel.getUserByName(clientUser.name)
+            userViewModel.getUserByName(name)
         }
     }
 

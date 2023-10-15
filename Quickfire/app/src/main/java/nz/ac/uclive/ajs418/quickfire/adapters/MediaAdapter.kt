@@ -10,7 +10,7 @@ import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.entity.Media
 
 // Adapter for the RecyclerView to display media items.
-class MediaAdapter(private val mediaList: Array<Media>) :
+class MediaAdapter(private val mediaList: List<Media>) :
     RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
 
     // Create a new ViewHolder for a media item view.

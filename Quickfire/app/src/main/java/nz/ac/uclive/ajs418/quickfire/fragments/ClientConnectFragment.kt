@@ -53,6 +53,7 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
     private var clientUser = User("", "")
 
     private var party = Party("", arrayListOf(), arrayListOf())
+    private var partyId: Long = 0L
 
     private lateinit var coroutineScope: CoroutineScope
 
@@ -71,6 +72,9 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        partyViewModel.parties.observe(viewLifecycleOwner) { parties ->
+            partyId = parties.size.toLong()
+        }
         return inflater.inflate(R.layout.fragment_connect, container, false)
     }
 
@@ -111,7 +115,7 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
                 }
                 party = Party(partNameText, partyMembers, arrayListOf()) //  Matches is initially empty
                 lifecycleScope.launch { partyViewModel.addParty(party) }
-                lifecycleScope.launch { partyViewModel.setCurrentParty(party.id) }
+                lifecycleScope.launch { partyViewModel.setCurrentName(party.name) }
                 switchToClientPlayFragment(bluetoothClientService)
             }
         }
@@ -124,7 +128,7 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
 
     private suspend fun getUserByName(name : String) : User? {
         return withContext(coroutineScope.coroutineContext + Dispatchers.IO) {
-            userViewModel.getUserByName(clientUser.name)
+            userViewModel.getUserByName(name)
         }
     }
 

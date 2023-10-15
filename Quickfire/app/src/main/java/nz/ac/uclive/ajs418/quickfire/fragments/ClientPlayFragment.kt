@@ -60,8 +60,9 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
 
     private lateinit var mediaRepository: MediaRepository
     private var currentMedia: Media? = null
-    private var currentPartyId: Long = 0L
+    private var currentPartyName: String = ""
     private var currentUserId: Long = 0L
+    private var partyId: Long = 0L
 
     private lateinit var coroutineScope: CoroutineScope
 
@@ -79,7 +80,7 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
         partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
         likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
         mediaViewModel = (requireActivity() as MainActivity).getMediaViewModelInstance()
-        currentPartyId = partyViewModel.currentId
+        currentPartyName = partyViewModel.currentPartyName
         currentUserId = userViewModel.currentId
         coroutineScope = CoroutineScope(Dispatchers.Main + Job())
     }
@@ -88,6 +89,9 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        partyViewModel.parties.observe(viewLifecycleOwner) { parties ->
+            partyId = parties.size.toLong()
+        }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_play, container, false)
     }
@@ -202,7 +206,7 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
         Log.d("CPF", "Adding like")
         val likeInstance =
             withContext(coroutineScope.coroutineContext + Dispatchers.IO) {
-                getLikesByPartyAndMedia(currentPartyId, currentMediaId)
+                getLikesByPartyAndMedia(partyId, currentMediaId)
             }
         Log.d("CPF", "Like Instance: $likeInstance")
         if (likeInstance != null) {
@@ -210,7 +214,9 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
             if (likeInstance.likedBy != "CLIENT") {
                 // Match found
                 Log.d("CPF", "Match Found")
-                partyViewModel.addMatchToParty(currentPartyId, currentMediaId)
+                val id = partyId
+                Log.d("CPF", "add like party ID: $id")
+                partyViewModel.addMatchToParty(partyId, currentMediaId)
                 showMatch()
                 // send match
                 sendData("MATCH: $currentMediaId")
@@ -218,7 +224,7 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
         } else {
             // likeInstance is null, create new like
             Log.d("CPF", "Create like")
-            val like = Like(currentPartyId, currentMediaId, "CLIENT")
+            val like = Like(partyId, currentMediaId, "CLIENT")
             likeViewModel.addLike(like)
             sendData("LIKE: $currentMediaId, $currentUserId")
         }
@@ -285,7 +291,7 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
             val userId = values[1].trim().toLong()
             val likeInstance =
                 withContext(coroutineScope.coroutineContext + Dispatchers.IO) {
-                    getLikesByPartyAndMedia(currentPartyId, mediaId)
+                    getLikesByPartyAndMedia(partyId, mediaId)
                 }
             if (likeInstance != null) {
                 // likeInstance is not null, you can use it here
@@ -293,7 +299,9 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
                 if (likeInstance.likedBy == "CLIENT") {
                     // Match found
                     Log.d("CPF", "Match Found")
-                    partyViewModel.addMatchToParty(currentPartyId, mediaId)
+                    val id = partyId
+                    Log.d("CPF", "Handle Like message party ID: $id")
+                    partyViewModel.addMatchToParty(partyId, mediaId)
                     showMatch()
                     // send match
                     sendData("MATCH: $mediaId")
@@ -301,7 +309,7 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
             } else {
                 // likeInstance is null, create new like FROM SERVER
                 Log.d("CPF", "Create like")
-                val like = Like(currentPartyId, mediaId, "SERVER")
+                val like = Like(partyId, mediaId, "SERVER")
                 likeViewModel.addLike(like)
             }
         } else {
@@ -310,11 +318,14 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
     }
 
     private fun handleMatchMessage(content: String) {
-        val mediaId = content.trim().toLong()
+        Log.d("CPF", "Handle Match Message $content")
+        var id = partyId
+        Log.d("CPF", "read CurrentPartyId: $id")
+        val mediaId = content.toLong()
+        partyViewModel.addMatchToParty(partyId, mediaId)
         activity?.runOnUiThread {
             showMatch()
         }
-        partyViewModel.addMatchToParty(currentPartyId, mediaId)
     }
 
     private fun sendData(data: String) {

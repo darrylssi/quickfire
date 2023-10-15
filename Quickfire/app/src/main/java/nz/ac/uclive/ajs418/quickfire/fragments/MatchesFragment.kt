@@ -8,12 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.flow.Flow
 import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.adapters.PartyAdapter
 import nz.ac.uclive.ajs418.quickfire.entity.Party
-import nz.ac.uclive.ajs418.quickfire.service.BluetoothClientService
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 
 
@@ -57,7 +55,7 @@ class MatchesFragment : Fragment(), PartyAdapter.OnItemClickListener {
 
         // Create a fragment transaction to navigate to PartyDetailsFragment
         val fragmentTransaction = parentFragmentManager.beginTransaction()
-        val partyDetailsFragment = PartyDetailsFragment()
+        val partyDetailsFragment = PartyDetailsFragment(party)
 
         // Pass the selected party's ID to the PartyDetailsFragment using a Bundle
         val bundle = Bundle()

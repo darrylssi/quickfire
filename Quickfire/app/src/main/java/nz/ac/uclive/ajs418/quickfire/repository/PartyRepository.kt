@@ -33,4 +33,8 @@ class PartyRepository(private val partyDao: PartyDao) {
             updateParty(it)
         }
     }
+
+    suspend fun getPartyByName(currentPartyName: String): Party? {
+        return partyDao.getPartyByName(currentPartyName)
+    }
 }
