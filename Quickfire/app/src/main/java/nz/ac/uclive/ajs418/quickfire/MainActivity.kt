@@ -7,7 +7,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import nz.ac.uclive.ajs418.quickfire.databinding.ActivityMainBinding
 import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.fragments.*
@@ -62,11 +67,11 @@ class MainActivity : AppCompatActivity() {
                     val firstUserName = users[0].name
                     val firstType = users[0].bluetoothType
                     Log.d("MainActivity", "First User Name: $firstUserName")
-                    Log.d("MainActivity", "First User Name: $firstType")
+                    Log.d("MainActivity", "First Type: $firstType")
                     val secUserName = users[1].name
                     val secType = users[1].bluetoothType
                     Log.d("MainActivity", "Second User Name: $secUserName")
-                    Log.d("MainActivity", "First User Name: $secType")
+                    Log.d("MainActivity", "Second User Type: $secType")
                 }
             }
         })
@@ -120,5 +125,4 @@ class MainActivity : AppCompatActivity() {
     fun getMediaViewModelInstance(): MediaViewModel {
         return mediaViewModel
     }
-
 }

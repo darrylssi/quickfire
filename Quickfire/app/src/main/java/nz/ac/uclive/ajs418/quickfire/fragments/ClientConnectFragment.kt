@@ -75,6 +75,8 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
             val partyName = view.findViewById<EditText>(R.id.partyNameField)
             val partNameText = partyName.text.toString()
             sendData("party_name:$partNameText")
+            Log.d("CCF: Client Username", clientUser.name)
+            Log.d("CCF: Server Username", serverUser.name)
             val partyMembers = ArrayList<Long>().apply {
                 add(clientUser.id)
                 add(serverUser.id)

@@ -15,6 +15,10 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         userRepository.insert(user)
     }
 
+    suspend fun deleteUsers() = viewModelScope.launch {
+        userRepository.deleteAll()
+    }
+
 }
 
 class UserViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {

@@ -17,7 +17,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.entity.Party
@@ -63,13 +65,6 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
 
     }
 
-    private fun disableButton(button: Button, view: View) {
-        button.isEnabled = false
-        button.isClickable = false
-        button.setBackgroundColor(ContextCompat.getColor(view.context, R.color.grey))
-        button.setTextColor(ContextCompat.getColor(view.context, R.color.white))
-    }
-
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -110,9 +105,11 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
     }
 
     override fun onDataReceived(string: String) {
+        Log.d("ServerConnectFragment", string)
         // Handle the received data here
         if (string.startsWith("client_name:")) {
             val username = string.substringAfter("client_name:")
+            Log.d("SCF Client Name ODR", username)
             clientUser = User(username, "CLIENT")
             lifecycleScope.launch { userViewModel.addUser(clientUser) }
         }
@@ -123,6 +120,8 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
         }
         if (string.startsWith("party_name:")) {
             val partyName = string.substringAfter("party_name:")
+            Log.d("SCF: Client Username", clientUser.name)
+            Log.d("SCF: Server Username", serverUser.name)
             val partyMembers = ArrayList<Long>().apply {
                 add(clientUser.id)
                 add(serverUser.id)

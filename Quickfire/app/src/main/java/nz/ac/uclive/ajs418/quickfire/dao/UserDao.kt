@@ -13,4 +13,7 @@ interface UserDao {
     @Query("SELECT * FROM user")
     fun getAll(): Flow<List<User>>
 
+    @Query("DELETE FROM USER")
+    fun deleteAll()
+
 }
