@@ -30,6 +30,7 @@ import nz.ac.uclive.ajs418.quickfire.entity.Party
 import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
 import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModel
+import nz.ac.uclive.ajs418.quickfire.viewmodel.MediaViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
@@ -37,11 +38,15 @@ import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
     private val REQUEST_BLUETOOTH_PERMISSION = 1
     private lateinit var bluetoothClientService: BluetoothClientService
+
     private lateinit var userViewModel: UserViewModel
     private lateinit var partyViewModel: PartyViewModel
     private lateinit var likeViewModel: LikeViewModel
+    private lateinit var mediaViewModel: MediaViewModel
+
     private var serverUser = User("", "")
     private var clientUser = User("", "")
+
     private var party = Party("", arrayListOf(), arrayListOf())
 
 
@@ -49,7 +54,8 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
         super.onAttach(context)
         userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
         partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
-        //likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
+        likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
+        mediaViewModel = (requireActivity() as MainActivity).getMediaViewModelInstance()
     }
 
     override fun onCreateView(

@@ -27,6 +27,7 @@ import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServerService
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
 import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModel
+import nz.ac.uclive.ajs418.quickfire.viewmodel.MediaViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
@@ -37,6 +38,7 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
     private lateinit var userViewModel: UserViewModel
     private lateinit var partyViewModel: PartyViewModel
     private lateinit var likeViewModel: LikeViewModel
+    private lateinit var mediaViewModel: MediaViewModel
 
     private var serverUser = User("", "")
     private var clientUser = User("", "")
@@ -46,7 +48,8 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
         super.onAttach(context)
         userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
         partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
-        //likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
+        likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
+        mediaViewModel = (requireActivity() as MainActivity).getMediaViewModelInstance()
     }
 
     override fun onCreateView(

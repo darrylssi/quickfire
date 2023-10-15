@@ -17,8 +17,12 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.database.QuickfireDatabase
@@ -28,6 +32,7 @@ import nz.ac.uclive.ajs418.quickfire.repository.MediaRepository
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServerService
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
 import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModel
+import nz.ac.uclive.ajs418.quickfire.viewmodel.MediaViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
@@ -37,6 +42,7 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
     private lateinit var userViewModel: UserViewModel
     private lateinit var partyViewModel: PartyViewModel
     private lateinit var likeViewModel: LikeViewModel
+    private lateinit var mediaViewModel: MediaViewModel
 
     // UI elements
     private lateinit var posterView: ImageView
@@ -52,6 +58,8 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
     private var currentPartyId: Long = 0L
     private var currentUserId: Long = 0L
 
+    private lateinit var coroutineScope: CoroutineScope
+
     private var startX = 0f
     private var startY = 0f
     private val SWIPE_THRESHOLD = 100
@@ -65,8 +73,10 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
         userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
         partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
         likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
+        mediaViewModel = (requireActivity() as MainActivity).getMediaViewModelInstance()
         currentPartyId = partyViewModel.currentId
         currentUserId = userViewModel.currentId
+        coroutineScope = CoroutineScope(Dispatchers.Main + Job())
     }
 
     override fun onCreateView(
@@ -100,8 +110,9 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
 
         // Handle the "Random" button click
         yesButton.setOnClickListener {
-            currentMedia?.let { it1 -> addLike(it1.id) }
-            loadRandomMedia()
+            lifecycleScope.launch {
+                handleYesButtonClick()
+            }
         }
 
         noButton.setOnClickListener {
@@ -138,7 +149,9 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
                     if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
                         if (deltaX > 0) {
                             // Swipe right, perform the same action as clicking "Yes"
-                            handleSwipeRight()
+                            lifecycleScope.launch {
+                                handleSwipeRight()
+                            }
                         } else {
                             // Swipe left, perform the same action as clicking "No"
                             handleSwipeLeft()
@@ -158,9 +171,20 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
         }
     }
 
+    private suspend fun handleYesButtonClick() {
+        currentMedia?.let {
+            addLike(it.id)
+        }
+        loadRandomMedia()
+    }
+
     // Function to handle swipe right action
-    private fun handleSwipeRight() {
-        currentMedia?.let { addLike(it.id) }
+    private suspend fun handleSwipeRight() {
+        currentMedia?.let {
+            coroutineScope.launch {
+                addLike(it.id)
+            }
+        }
         loadRandomMedia()
     }
 
@@ -169,9 +193,12 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
         loadRandomMedia()
     }
 
-    private fun addLike(currentMediaId: Long) {
+    private suspend fun addLike(currentMediaId: Long) {
         Log.d("SPF", "Adding like")
-        val likeInstance = currentMedia?.let { likeViewModel.getLikesByMovieAndParty(currentPartyId, it.id) }
+        val likeInstance =
+            withContext(coroutineScope.coroutineContext + Dispatchers.IO) {
+                getLikesByPartyAndMedia(currentPartyId, currentMediaId)
+            }
         if (likeInstance != null) {
             // likeInstance is not null, you can use it here
             if (likeInstance.likedBy != currentUserId) {
@@ -190,6 +217,12 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
             likeViewModel.addLike(like)
             sendData("LIKE: $currentMediaId, $currentUserId")
         }
+    }
+
+    // Define a suspend function to get likes by party and media
+    // In your addLike function, replace the getLikesByPartyAndMedia call with this:
+    private suspend fun getLikesByPartyAndMedia(partyId: Long, mediaId: Long): Like? {
+        return likeViewModel.getLikesByPartyAndMedia(partyId, mediaId)
     }
 
     // Function to display media details in the UI
@@ -245,7 +278,8 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
         if (values.size == 2) {
             val mediaId = values[0].trim().toLong()
             val userId = values[1].trim().toLong()
-            // Process like message with mediaId and userId
+            val like = Like(currentPartyId, mediaId, userId)
+            likeViewModel.addLike(like)
         } else {
             Log.d("ClientPlayFragment", "Invalid LIKE message format: $content")
         }
@@ -253,11 +287,18 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
 
     private fun handleMatchMessage(content: String) {
         val mediaId = content.trim().toLong()
-        // Process match message with mediaId
+        partyViewModel.addMatchToParty(currentPartyId, mediaId)
+        val toast = Toast.makeText(context, "MATCH FOUND 😍", Toast.LENGTH_LONG)
+        toast.show()
     }
 
     private fun sendData(data: String) {
         bluetoothServerService.writeData(data)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineScope.cancel()
     }
 
 }

@@ -16,7 +16,7 @@ class LikeRepository(private val likeDao: LikeDao) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    fun findByPartyAndMovie(partyId: Long, movieId: Long) : Like? {
+    suspend fun findByPartyAndMovie(partyId: Long, movieId: Long) : Like? {
         return likeDao.findByPartyAndMovie(partyId, movieId)
     }
 }

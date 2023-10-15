@@ -17,7 +17,7 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
         likeRepository.insert(like)
     }
 
-    fun getLikesByMovieAndParty(partyId : Long, movieId : Long): Like? {
+    suspend fun getLikesByPartyAndMedia(partyId : Long, movieId : Long): Like? {
         return likeRepository.findByPartyAndMovie(partyId, movieId)
     }
 }
@@ -25,7 +25,7 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
 
 class LikeViewModelFactory(private val likeRepository: LikeRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(PartyViewModel::class.java)) {
+        if(modelClass.isAssignableFrom(LikeViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return LikeViewModel(likeRepository) as T
         }
