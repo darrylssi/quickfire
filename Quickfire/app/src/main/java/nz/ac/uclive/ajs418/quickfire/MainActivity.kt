@@ -2,10 +2,14 @@ package nz.ac.uclive.ajs418.quickfire
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import nz.ac.uclive.ajs418.quickfire.databinding.ActivityMainBinding
+import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.fragments.*
 import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModelFactory
@@ -47,6 +51,31 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        userViewModel.users.observe(this, Observer { users ->
+            users?.let {
+                Log.d("MainActivity", "Users: $users")
+
+                if (!users.isNullOrEmpty()) {
+                    val length = users.size
+                    Log.d("MainActivity", "Array Length: $length")
+                    val firstUserName = users[0].name
+                    val firstType = users[0].bluetoothType
+                    Log.d("MainActivity", "First User Name: $firstUserName")
+                    Log.d("MainActivity", "First User Name: $firstType")
+                    val secUserName = users[1].name
+                    val secType = users[1].bluetoothType
+                    Log.d("MainActivity", "Second User Name: $secUserName")
+                    Log.d("MainActivity", "First User Name: $secType")
+                }
+            }
+        })
+
+        partyViewModel.parties.observe(this, Observer { parties ->
+            parties?.let {
+                Log.d("MainActivity", "Parties: $parties")
+            }
+        })
 
         // Inflate the layout using View Binding
         binding = ActivityMainBinding.inflate(layoutInflater)

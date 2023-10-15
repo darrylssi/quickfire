@@ -65,7 +65,6 @@ class BluetoothServerService {
                 // Start reading data
                 writeData("Hello Client, I'm Server")
                 val deviceName = bluetoothAdapter?.name
-                val user = deviceName?.let { User(it, "SERVER") }
                 writeData("server_name:$deviceName")
                 returnDataToFrag("server_name:$deviceName")
                 //start reading data

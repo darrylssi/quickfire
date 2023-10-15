@@ -39,4 +39,5 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
         super.onViewCreated(view, savedInstanceState)
         bluetoothServerService.setCallback(this)
     }
+
 }
