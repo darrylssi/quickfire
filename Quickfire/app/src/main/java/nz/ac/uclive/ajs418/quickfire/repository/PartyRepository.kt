@@ -22,6 +22,15 @@ class PartyRepository(private val partyDao: PartyDao) {
         partyDao.update(party)
     }
 
+    suspend fun getPartyByName(partyName: String): Party? {
+        return partyDao.getPartyByName(partyName)
+    }
+
+    suspend fun partyHasMatch(partyId: Long, mediaId: Long): Party? {
+        return partyDao.partyHasMatch(partyId, mediaId)
+    }
+
+
     suspend fun addMatch(partyId: Long, mediaId: Long) {
         // Step 1: Retrieve the party
         val party = getPartyById(partyId)

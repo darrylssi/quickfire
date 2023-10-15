@@ -35,6 +35,10 @@ class PartyViewModel(private val partyRepository: PartyRepository) : ViewModel()
         return partyRepository.getPartyByName(currentPartyName)
     }
 
+    suspend fun partyHasMatch(partyId: Long, mediaId: Long): Party? {
+        return partyRepository.partyHasMatch(partyId, mediaId)
+    }
+
 }
 
 class PartyViewModelFactory(private val partyRepository: PartyRepository) : ViewModelProvider.Factory {
