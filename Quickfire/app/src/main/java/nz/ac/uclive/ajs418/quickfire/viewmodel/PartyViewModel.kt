@@ -12,9 +12,14 @@ import java.lang.IllegalArgumentException
 
 class PartyViewModel(private val partyRepository: PartyRepository) : ViewModel() {
     val parties: LiveData<List<Party>> = partyRepository.parties.asLiveData()
+    var currentId = 0L
 
     fun addParty(party: Party) = viewModelScope.launch {
         partyRepository.insert(party)
+    }
+
+    fun setCurrentParty(partyId : Long) {
+        currentId = partyId
     }
 
 }

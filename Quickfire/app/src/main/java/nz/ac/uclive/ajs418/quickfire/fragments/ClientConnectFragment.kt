@@ -83,6 +83,7 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
             }
             party = Party(partNameText, partyMembers, arrayListOf()) //  Matches is initially empty
             lifecycleScope.launch { partyViewModel.addParty(party) }
+            lifecycleScope.launch { partyViewModel.setCurrentParty(party.id) }
             switchToClientPlayFragment(bluetoothClientService)
         }
     }
