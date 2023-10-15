@@ -1,6 +1,7 @@
 package nz.ac.uclive.ajs418.quickfire.fragments
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -330,6 +331,9 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
         val toast = Toast.makeText(context, R.string.match_found, Toast.LENGTH_LONG)
         toast.show()
         vibrate()
+
+        val mediaPlayer = MediaPlayer.create(context, R.raw.match)
+        mediaPlayer.start()
     }
 
     private fun vibrate() {
