@@ -3,6 +3,8 @@ package nz.ac.uclive.ajs418.quickfire.fragments
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -14,6 +16,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Picasso
@@ -208,8 +211,7 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
                 // Match found
                 Log.d("SPF", "Match Found")
                 partyViewModel.addMatchToParty(currentPartyId, currentMediaId)
-                val toast = Toast.makeText(context, "MATCH FOUND 😍", Toast.LENGTH_LONG)
-                toast.show()
+                showMatch()
                 // send match
                 sendData("MATCH: $currentMediaId")
             }
@@ -292,8 +294,7 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
                     // Match found
                     Log.d("CPF", "Match Found")
                     partyViewModel.addMatchToParty(currentPartyId, mediaId)
-                    val toast = Toast.makeText(context, "MATCH FOUND 😍", Toast.LENGTH_LONG)
-                    toast.show()
+                    showMatch()
                     // send match
                     sendData("MATCH: $mediaId")
                 }
@@ -311,8 +312,7 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
     private fun handleMatchMessage(content: String) {
         val mediaId = content.trim().toLong()
         activity?.runOnUiThread {
-            val toast = Toast.makeText(context, "MATCH FOUND 😍", Toast.LENGTH_LONG)
-            toast.show()
+            showMatch()
         }
         partyViewModel.addMatchToParty(currentPartyId, mediaId)
     }
@@ -325,6 +325,24 @@ class ServerPlayFragment : Fragment(), BluetoothServiceCallback {
     override fun onDestroy() {
         super.onDestroy()
         coroutineScope.cancel()
+    }
+
+    private fun vibrate() {
+        val vibrator = ContextCompat.getSystemService(requireContext(), Vibrator::class.java)
+        val amplitude = 200 // Adjust the vibration strength
+        val duration = 100 // Adjust the vibration duration
+        if (vibrator != null) {
+            if (vibrator.hasVibrator()) {
+                val vibrationEffect = VibrationEffect.createOneShot(duration.toLong(), amplitude)
+                vibrator.vibrate(vibrationEffect)
+            }
+        }
+    }
+
+    private fun showMatch() {
+        val toast = Toast.makeText(context, R.string.match_found, Toast.LENGTH_LONG)
+        toast.show()
+        vibrate()
     }
 
 }
