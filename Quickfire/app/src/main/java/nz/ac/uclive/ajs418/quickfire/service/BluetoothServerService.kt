@@ -63,10 +63,10 @@ class BluetoothServerService {
                 outputStream = bluetoothSocket?.outputStream
 
                 // Start reading data
-                writeData("Hello Client, I'm Server")
+                // writeData("Hello Client, I'm Server")
                 val deviceName = bluetoothAdapter?.name
-                val user = deviceName?.let { User(it, "SERVER") }
-                writeData("Server Name: $deviceName")
+                writeData("server_name:$deviceName")
+                returnDataToFrag("server_name:$deviceName")
                 //start reading data
                 readData()
                 onSocketEstablished()
@@ -79,6 +79,7 @@ class BluetoothServerService {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun readData() {
+        Log.d("BSS", "Client to Server read")
         val buffer = ByteArray(1024)
 
         GlobalScope.launch(Dispatchers.IO) {
@@ -100,11 +101,12 @@ class BluetoothServerService {
 
     private fun returnDataToFrag(string: String) {
         callback?.onDataReceived(string)
-        Log.d("BluetoothServerService", string)
+        Log.d("BluetoothServerService Return data to frag", string)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     fun writeData(data: String) {
+        Log.d("BSS","Server to Client write")
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val bytes = data.toByteArray()

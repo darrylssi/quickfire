@@ -16,8 +16,14 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.R
+import nz.ac.uclive.ajs418.quickfire.entity.Party
+import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServerService
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
@@ -28,6 +34,9 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
     private lateinit var bluetoothServerService: BluetoothServerService
     private lateinit var userViewModel: UserViewModel
     private lateinit var partyViewModel: PartyViewModel
+    private var serverUser = User("", "")
+    private var clientUser = User("", "")
+    private var party = Party("", arrayListOf(), arrayListOf())
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -54,18 +63,6 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
             enableDiscovery()
         }
 
-        val arguments = arguments
-        if (arguments != null && arguments.getBoolean("isMember")) {
-            val startButton = view.findViewById<Button>(R.id.startMatchButton)
-            disableButton(startButton, view)
-        }
-    }
-
-    private fun disableButton(button: Button, view: View) {
-        button.isEnabled = false
-        button.isClickable = false
-        button.setBackgroundColor(ContextCompat.getColor(view.context, R.color.grey))
-        button.setTextColor(ContextCompat.getColor(view.context, R.color.white))
     }
 
     @Deprecated("Deprecated in Java")
@@ -107,12 +104,32 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
         }
     }
 
-    override fun onDataReceived(data: String) {
+    override fun onDataReceived(string: String) {
+        Log.d("ServerConnectFragment", string)
         // Handle the received data here
-    }
-
-    private fun sendData(data: String) {
-        bluetoothServerService.writeData(data)
+        if (string.startsWith("client_name:")) {
+            val username = string.substringAfter("client_name:")
+            Log.d("SCF Client Name ODR", username)
+            clientUser = User(username, "CLIENT")
+            lifecycleScope.launch { userViewModel.addUser(clientUser) }
+        }
+        if (string.startsWith("server_name:")) {
+            val username = string.substringAfter("server_name:")
+            serverUser = User(username, "SERVER")
+            lifecycleScope.launch { userViewModel.addUser(serverUser) }
+        }
+        if (string.startsWith("party_name:")) {
+            val partyName = string.substringAfter("party_name:")
+            Log.d("SCF: Client Username", clientUser.name)
+            Log.d("SCF: Server Username", serverUser.name)
+            val partyMembers = ArrayList<Long>().apply {
+                add(clientUser.id)
+                add(serverUser.id)
+            }
+            party = Party(partyName, partyMembers, arrayListOf()) //  Matches is initially empty
+            lifecycleScope.launch { partyViewModel.addParty(party) }
+            switchToServerPlayFragment(bluetoothServerService)
+        }
     }
 
     private fun switchToServerPlayFragment(bluetoothServerService: BluetoothServerService) {

@@ -15,14 +15,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ListView
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothClientService
 import nz.ac.uclive.ajs418.quickfire.R
+import nz.ac.uclive.ajs418.quickfire.entity.Party
+import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
@@ -33,6 +38,10 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
     private lateinit var bluetoothClientService: BluetoothClientService
     private lateinit var userViewModel: UserViewModel
     private lateinit var partyViewModel: PartyViewModel
+    private var serverUser = User("", "")
+    private var clientUser = User("", "")
+    private var party = Party("", arrayListOf(), arrayListOf())
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -57,20 +66,30 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
         val addButton = view.findViewById<Button>(R.id.addPersonButton)
         addButton.setOnClickListener {
             showPairedDevicesPopup()
+            enableStartButton(view)
         }
 
-        val arguments = arguments
-        if (arguments != null && arguments.getBoolean("isMember")) {
-            val startButton = view.findViewById<Button>(R.id.startMatchButton)
-            disableButton(startButton, view)
+        val startButton = view.findViewById<Button>(R.id.startMatchButton)
+
+        startButton.setOnClickListener {
+            val partyName = view.findViewById<EditText>(R.id.partyNameField)
+            val partNameText = partyName.text.toString()
+            sendData("party_name:$partNameText")
+            Log.d("CCF: Client Username", clientUser.name)
+            Log.d("CCF: Server Username", serverUser.name)
+            val partyMembers = ArrayList<Long>().apply {
+                add(clientUser.id)
+                add(serverUser.id)
+            }
+            party = Party(partNameText, partyMembers, arrayListOf()) //  Matches is initially empty
+            lifecycleScope.launch { partyViewModel.addParty(party) }
+            switchToClientPlayFragment(bluetoothClientService)
         }
     }
 
-    private fun disableButton(button: Button, view: View) {
-        button.isEnabled = false
-        button.isClickable = false
-        button.setBackgroundColor(ContextCompat.getColor(view.context, R.color.grey))
-        button.setTextColor(ContextCompat.getColor(view.context, R.color.white))
+    private fun enableStartButton( view: View) {
+        val startButton = view.findViewById<Button>(R.id.startMatchButton)
+        startButton.isEnabled = true
     }
 
     @Deprecated("Deprecated in Java")
@@ -138,13 +157,22 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
                 dialog.dismiss()
             }
         }
-
         dialog.show()
     }
 
     override fun onDataReceived(string: String) {
         Log.d("ClientConnectFragment", string)
         // Handle the received data here
+        if (string.startsWith("client_name:")) {
+            val username = string.substringAfter("client_name:")
+            clientUser = User(username, "CLIENT")
+            lifecycleScope.launch { userViewModel.addUser(clientUser) }
+        }
+        if (string.startsWith("server_name:")) {
+            val username = string.substringAfter("server_name:")
+            serverUser = User(username, "SERVER")
+            lifecycleScope.launch { userViewModel.addUser(serverUser) }
+        }
     }
 
     private fun sendData(data: String) {

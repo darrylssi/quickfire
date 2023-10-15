@@ -20,6 +20,11 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun addUser(user: User) = viewModelScope.launch {
         userRepository.insert(user)
     }
+
+    suspend fun deleteUsers() = viewModelScope.launch {
+        userRepository.deleteAll()
+    }
+
 }
 
 

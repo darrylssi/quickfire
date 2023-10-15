@@ -15,13 +15,11 @@ class Party : Parcelable {
     @ColumnInfo var name: String
     @ColumnInfo var members: ArrayList<Long>
     @ColumnInfo var matches: ArrayList<Long>
-    @ColumnInfo var media_type: Boolean?
 
     constructor(name: String, members: ArrayList<Long>, matches: ArrayList<Long>, media_type : Boolean) {
         this.name = name
         this.members = members
         this.matches = matches
-        this.media_type = media_type
     }
 
     constructor(parcel: Parcel) {
@@ -39,7 +37,6 @@ class Party : Parcelable {
                 add(parcel.readLong())
             }
         }
-        media_type = parcel.readBoolean()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -53,7 +50,6 @@ class Party : Parcelable {
         for (match in matches) {
             parcel.writeLong(match)
         }
-        parcel.writeBoolean(media_type)
     }
 
 

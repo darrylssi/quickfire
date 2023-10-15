@@ -26,11 +26,11 @@ class HomeFragment : Fragment() {
         val soloPlayButton = view.findViewById<Button>(R.id.soloPlayButton)
 
         createPartyButton.setOnClickListener {
-            replaceWithClientConnect(false)
+            replaceWithClientConnect()
         }
 
         joinPartyButton.setOnClickListener {
-            replaceWithServerConnect(false)
+            replaceWithServerConnect()
         }
 
         soloPlayButton.setOnClickListener {
@@ -38,26 +38,17 @@ class HomeFragment : Fragment() {
         }
     }
 
-
-    private fun replaceWithClientConnect(isMember: Boolean) {
-        val bundle = Bundle()
-        bundle.putBoolean("isMember", isMember)
-
+    private fun replaceWithClientConnect() {
         val fragmentTransaction = parentFragmentManager.beginTransaction()
         val clientConnectFragment = ClientConnectFragment()
-        clientConnectFragment.arguments = bundle
 
         fragmentTransaction.replace(R.id.fragmentContainer, clientConnectFragment)
             .commit()
     }
 
-    private fun replaceWithServerConnect(isMember: Boolean) {
-        val bundle = Bundle()
-        bundle.putBoolean("isMember", isMember)
-
+    private fun replaceWithServerConnect() {
         val fragmentTransaction = parentFragmentManager.beginTransaction()
         val serverConnectFragment = ServerConnectFragment()
-       serverConnectFragment.arguments = bundle
 
         fragmentTransaction.replace(R.id.fragmentContainer, serverConnectFragment)
             .commit()
