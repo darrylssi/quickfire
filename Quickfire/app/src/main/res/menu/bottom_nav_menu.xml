@@ -6,10 +6,6 @@
         android:title="Connect"
         android:icon="@drawable/baseline_add_24" />
     <item
-        android:id="@+id/playFragment"
-        android:title="Play"
-        android:icon="@drawable/baseline_play_arrow_24" />
-    <item
         android:id="@+id/matchesFragment"
         android:title="Matches"
         android:icon="@drawable/baseline_format_list_bulleted_24"/>

@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.connectFragment -> replaceFragment(homeFragment)
-                R.id.playFragment -> replaceFragment(playFragment)
                 R.id.matchesFragment -> replaceFragment(matchesFragment)
                 R.id.settingsFragment -> replaceFragment(settingsFragment)
             }
