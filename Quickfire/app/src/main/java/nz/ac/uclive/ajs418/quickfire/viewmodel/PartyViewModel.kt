@@ -22,6 +22,10 @@ class PartyViewModel(private val partyRepository: PartyRepository) : ViewModel()
         currentId = partyId
     }
 
+    fun addMatchToParty(partyId: Long, mediaId: Long) = viewModelScope.launch {
+        partyRepository.addMatch(partyId, mediaId)
+    }
+
 }
 
 class PartyViewModelFactory(private val partyRepository: PartyRepository) : ViewModelProvider.Factory {

@@ -15,7 +15,7 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         userRepository.insert(user)
     }
 
-    fun setCurrentId(userId : Long) {
+    fun setId(userId : Long) {
         currentId = userId
     }
 }

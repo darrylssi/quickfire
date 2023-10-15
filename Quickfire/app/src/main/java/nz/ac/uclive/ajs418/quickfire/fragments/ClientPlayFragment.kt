@@ -3,6 +3,7 @@ package nz.ac.uclive.ajs418.quickfire.fragments
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +33,7 @@ import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
     private lateinit var bluetoothClientService: BluetoothClientService
+
     private lateinit var userViewModel: UserViewModel
     private lateinit var partyViewModel: PartyViewModel
     private lateinit var likeViewModel: LikeViewModel
@@ -167,12 +170,26 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
     }
 
     private fun addLike(currentMediaId: Long) {
-        //var like = Like()
-        // add like
-        // send like
-        // check for match
-        // if match create match
-        TODO("Not yet implemented")
+        Log.d("CPF", "Adding like")
+        val likeInstance = currentMedia?.let { likeViewModel.getLikesByMovieAndParty(currentPartyId, it.id) }
+        if (likeInstance != null) {
+            // likeInstance is not null, you can use it here
+            if (likeInstance.likedBy != currentUserId) {
+                // Match found
+                Log.d("SPF", "Match Found")
+                partyViewModel.addMatchToParty(currentPartyId, currentMediaId)
+                val toast = Toast.makeText(context, "MATCH FOUND 😍", Toast.LENGTH_LONG)
+                toast.show()
+                // send match
+                sendData("MATCH: $currentMediaId")
+            }
+        } else {
+            // likeInstance is null, create new like
+            Log.d("SPF", "Create like")
+            val like = Like(currentPartyId, currentMediaId, currentUserId)
+            likeViewModel.addLike(like)
+            sendData("LIKE: $currentMediaId, $currentUserId")
+        }
     }
 
     // Function to display media details in the UI
@@ -207,7 +224,36 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
     }
 
     override fun onDataReceived(data: String) {
-        // Handle the received data here
+        Log.d("CPF", "DataReceived $data")
+        val parts = data.split(":")
+        if (parts.size >= 2) {
+            val messageType = parts[0].trim()
+            val messageContent = parts[1].trim()
+
+            when (messageType) {
+                "LIKE" -> handleLikeMessage(messageContent)
+                "MATCH" -> handleMatchMessage(messageContent)
+                else -> Log.d("ClientPlayFragment", "Unknown message type: $messageType")
+            }
+        } else {
+            Log.d("ClientPlayFragment", "Invalid message format: $data")
+        }
+    }
+
+    private fun handleLikeMessage(content: String) {
+        val values = content.split(",")
+        if (values.size == 2) {
+            val mediaId = values[0].trim().toLong()
+            val userId = values[1].trim().toLong()
+            // Process like message with mediaId and userId
+        } else {
+            Log.d("ClientPlayFragment", "Invalid LIKE message format: $content")
+        }
+    }
+
+    private fun handleMatchMessage(content: String) {
+        val mediaId = content.trim().toLong()
+        // Process match message with mediaId
     }
 
     private fun sendData(data: String) {

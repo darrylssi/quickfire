@@ -29,6 +29,7 @@ import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.entity.Party
 import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
+import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
@@ -38,6 +39,7 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
     private lateinit var bluetoothClientService: BluetoothClientService
     private lateinit var userViewModel: UserViewModel
     private lateinit var partyViewModel: PartyViewModel
+    private lateinit var likeViewModel: LikeViewModel
     private var serverUser = User("", "")
     private var clientUser = User("", "")
     private var party = Party("", arrayListOf(), arrayListOf())
@@ -47,6 +49,7 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
         super.onAttach(context)
         userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
         partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
+        //likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
     }
 
     override fun onCreateView(
@@ -168,7 +171,7 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
             val username = string.substringAfter("client_name:")
             clientUser = User(username, "CLIENT")
             lifecycleScope.launch { userViewModel.addUser(clientUser) }
-            lifecycleScope.launch { userViewModel.setCurrentId(clientUser.id) }
+            lifecycleScope.launch { userViewModel.setId(clientUser.id) }
         }
         if (string.startsWith("server_name:")) {
             val username = string.substringAfter("server_name:")

@@ -12,5 +12,7 @@ interface LikeDao {
 
     @Query("SELECT * FROM like_table")
     fun getAll(): Flow<List<Like>>
+    @Query("SELECT * FROM like_table WHERE partyId = :partyId AND movieId = :movieId")
+    fun findByPartyAndMovie(partyId: Long, movieId: Long): Like?
 
 }

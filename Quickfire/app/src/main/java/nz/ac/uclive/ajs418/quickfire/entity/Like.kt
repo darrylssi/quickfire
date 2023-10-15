@@ -6,7 +6,7 @@ import androidx.room.*
 class Like (
     @ColumnInfo var partyId: Long,
     @ColumnInfo var movieId: Long,
-    @ColumnInfo var likedBy: ArrayList<Long>
+    @ColumnInfo var likedBy: Long
         ){
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 

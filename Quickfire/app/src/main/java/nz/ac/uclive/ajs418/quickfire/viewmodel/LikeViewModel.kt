@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import nz.ac.uclive.ajs418.quickfire.entity.Like
 import nz.ac.uclive.ajs418.quickfire.repository.LikeRepository
-import nz.ac.uclive.ajs418.quickfire.repository.PartyRepository
 import java.lang.IllegalArgumentException
 
 class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
@@ -16,6 +15,10 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
 
     fun addLike(like: Like) = viewModelScope.launch {
         likeRepository.insert(like)
+    }
+
+    fun getLikesByMovieAndParty(partyId : Long, movieId : Long): Like? {
+        return likeRepository.findByPartyAndMovie(partyId, movieId)
     }
 }
 

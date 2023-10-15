@@ -45,36 +45,17 @@ class MainActivity : AppCompatActivity() {
         ViewModelProvider(this, PartyViewModelFactory((application as QuickfireApplication).partyRepository))
             .get(PartyViewModel::class.java)
     }
-    private val likeViewModel: LikeViewModel by lazy {
-        ViewModelProvider(this, LikeViewModelFactory((application as QuickfireApplication).likeRepository))
-            .get(LikeViewModel::class.java)
-    }
     private val mediaViewModel: MediaViewModel by lazy {
         ViewModelProvider(this, MediaViewModelFactory((application as QuickfireApplication).mediaRepository))
             .get(MediaViewModel::class.java)
     }
+    private val likeViewModel: LikeViewModel by lazy {
+        ViewModelProvider(this, LikeViewModelFactory((application as QuickfireApplication).likeRepository))
+            .get(LikeViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        userViewModel.users.observe(this, Observer { users ->
-            users?.let {
-                Log.d("MainActivity", "Users: $users")
-
-                if (!users.isNullOrEmpty()) {
-                    val length = users.size
-                    Log.d("MainActivity", "Array Length: $length")
-                    val firstUserName = users[0].name
-                    val firstType = users[0].bluetoothType
-                    Log.d("MainActivity", "First User Name: $firstUserName")
-                    Log.d("MainActivity", "First Type: $firstType")
-                    val secUserName = users[1].name
-                    val secType = users[1].bluetoothType
-                    Log.d("MainActivity", "Second User Name: $secUserName")
-                    Log.d("MainActivity", "Second User Type: $secType")
-                }
-            }
-        })
 
         partyViewModel.parties.observe(this, Observer { parties ->
             parties?.let {

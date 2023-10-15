@@ -13,4 +13,10 @@ class LikeRepository(private val likeDao: LikeDao) {
     suspend fun insert(like: Like) {
         likeDao.insert(like)
     }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    fun findByPartyAndMovie(partyId: Long, movieId: Long) : Like? {
+        return likeDao.findByPartyAndMovie(partyId, movieId)
+    }
 }

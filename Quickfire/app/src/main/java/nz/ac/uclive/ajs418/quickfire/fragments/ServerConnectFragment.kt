@@ -26,14 +26,18 @@ import nz.ac.uclive.ajs418.quickfire.entity.Party
 import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServerService
 import nz.ac.uclive.ajs418.quickfire.service.BluetoothServiceCallback
+import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
     private val REQUEST_BLUETOOTH_PERMISSION = 1
     private lateinit var bluetoothServerService: BluetoothServerService
+
     private lateinit var userViewModel: UserViewModel
     private lateinit var partyViewModel: PartyViewModel
+    private lateinit var likeViewModel: LikeViewModel
+
     private var serverUser = User("", "")
     private var clientUser = User("", "")
     private var party = Party("", arrayListOf(), arrayListOf())
@@ -42,6 +46,7 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
         super.onAttach(context)
         userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
         partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
+        //likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
     }
 
     override fun onCreateView(
@@ -117,7 +122,7 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
             val username = string.substringAfter("server_name:")
             serverUser = User(username, "SERVER")
             lifecycleScope.launch { userViewModel.addUser(serverUser) }
-            lifecycleScope.launch { userViewModel.setCurrentId(serverUser.id) }
+            lifecycleScope.launch { userViewModel.setId(serverUser.id) }
         }
         if (string.startsWith("party_name:")) {
             val partyName = string.substringAfter("party_name:")
