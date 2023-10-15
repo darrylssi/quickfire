@@ -18,7 +18,7 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
         likeRepository.insert(like)
     }
 
-    fun getLikesByMovieAndParty(partyId : Long, movieId : Long): Like? {
+    suspend fun getLikesByPartyAndMedia(partyId : Long, movieId : Long): Like? {
         return likeRepository.findByPartyAndMovie(partyId, movieId)
     }
 

@@ -12,8 +12,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.database.QuickfireDatabase
@@ -48,8 +51,12 @@ class PlayFragment() : Fragment() {
     private var startY = 0f
     private val SWIPE_THRESHOLD = 100
 
+    private lateinit var coroutineScope: CoroutineScope
+
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        coroutineScope = CoroutineScope(Dispatchers.Main + Job())
         userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
         partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
         likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
@@ -86,7 +93,10 @@ class PlayFragment() : Fragment() {
 
         // Handle the "Random" button click
         yesButton.setOnClickListener {
-            currentMedia?.let { it1 -> addLike(it1.id) }
+            lifecycleScope.launch {
+                handleYesButtonClick()
+            }
+
             loadRandomMedia()
         }
 
@@ -98,6 +108,11 @@ class PlayFragment() : Fragment() {
         setupSwipeGestureDetection()
     }
 
+    private suspend fun handleYesButtonClick() {
+        currentMedia?.let {
+            addLike(it.id)
+        }
+    }
 
 
     // Function to load a random media item
@@ -127,7 +142,11 @@ class PlayFragment() : Fragment() {
                     if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
                         if (deltaX > 0) {
                             // Swipe right, perform the same action as clicking "Yes"
-                            handleSwipeRight()
+                            lifecycleScope.launch {
+                                handleSwipeRight()
+                            }
+                            loadRandomMedia()
+
                         } else {
                             // Swipe left, perform the same action as clicking "No"
                             handleSwipeLeft()
@@ -149,7 +168,11 @@ class PlayFragment() : Fragment() {
 
     // Function to handle swipe right action
     private fun handleSwipeRight() {
-        currentMedia?.let { it1 -> addLike(it1.id) }
+        currentMedia?.let {
+            coroutineScope.launch {
+                addLike(it.id)
+            }
+        }
         loadRandomMedia()
     }
 
@@ -158,12 +181,15 @@ class PlayFragment() : Fragment() {
         loadRandomMedia()
     }
 
-    private fun addLike(currentMediaId: Long) {
-        Log.d("SPF", "Adding like")
-        val likeInstance = currentMedia?.let { likeViewModel.getLikesByMovieAndParty(currentPartyId, it.id) }
+    private suspend fun addLike(currentMediaId: Long) {
+        Log.d("CPF", "Adding like")
+        val likeInstance =
+            withContext(coroutineScope.coroutineContext + Dispatchers.IO) {
+                getLikesByPartyAndMedia(currentPartyId, currentMediaId)
+            }
         if (likeInstance != null) {
             // likeInstance is not null, you can use it here
-            if (likeInstance.likedBy == currentUserId) {
+            if (likeInstance.likedBy != currentUserId) {
                 // Match found
                 Log.d("SPF", "Match Found")
                 partyViewModel.addMatchToParty(currentPartyId, currentMediaId)
@@ -177,6 +203,14 @@ class PlayFragment() : Fragment() {
             likeViewModel.addLike(like)
         }
     }
+
+
+    // Define a suspend function to get likes by party and media
+    // In your addLike function, replace the getLikesByPartyAndMedia call with this:
+    private suspend fun getLikesByPartyAndMedia(partyId: Long, mediaId: Long): Like? {
+        return likeViewModel.getLikesByPartyAndMedia(partyId, mediaId)
+    }
+
 
 
     // Function to display media details in the UI
