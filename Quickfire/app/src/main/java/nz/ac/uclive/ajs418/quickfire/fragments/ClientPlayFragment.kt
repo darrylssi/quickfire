@@ -241,7 +241,7 @@ class ClientPlayFragment : Fragment(), BluetoothServiceCallback {
                     .into(posterView)
 
                 // Set the media details in UI elements
-                titleText.text = media.title
+                titleText.text = media.title.replace("&#39;", "'")
                 yearText.text = "Year: ${media.year}"
                 typeText.text = "Type: ${media.type}"
 
