@@ -28,13 +28,10 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val themeSwitch: SwitchCompat = view.findViewById(R.id.themeSwitch)
-        val mediaSwitch: SwitchCompat = view.findViewById(R.id.mediaSwitch)
         val theme: TextView = view.findViewById(R.id.themeText)
-        val media: TextView = view.findViewById(R.id.mediaText)
 
         val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("MODE", Context.MODE_PRIVATE)
         val nightMode: Boolean = sharedPreferences.getBoolean("isNightMode", false)
-        val movieMode: Boolean = sharedPreferences.getBoolean("isMovieMode", true)
 
         if (nightMode) {
             themeSwitch.isChecked = true
@@ -42,10 +39,6 @@ class SettingsFragment : Fragment() {
             theme.text = getString(R.string.dark)
         }
 
-        if (movieMode) {
-            mediaSwitch.isChecked = true
-            media.text = getString(R.string.movie)
-        }
 
         themeSwitch.setOnClickListener {
             sharedPreferences.edit().putBoolean("isThemeChanged", true).apply()
@@ -68,15 +61,6 @@ class SettingsFragment : Fragment() {
                 .commit()
         }
 
-        mediaSwitch.setOnClickListener {
-            if (mediaSwitch.isChecked) {
-                sharedPreferences.edit().putBoolean("isMovieMode", true).apply()
-                media.text = getString(R.string.movie)
-            } else {
-                sharedPreferences.edit().putBoolean("isMovieMode", false).apply()
-                media.text = getString(R.string.tv_show)
-            }
-        }
     }
 
 }
