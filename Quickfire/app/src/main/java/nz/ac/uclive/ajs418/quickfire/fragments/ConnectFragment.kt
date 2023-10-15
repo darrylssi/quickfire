@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.Dispatchers
@@ -31,11 +32,12 @@ import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.fragments.PlayFragment
 import nz.ac.uclive.ajs418.quickfire.repository.PartyRepository
 import nz.ac.uclive.ajs418.quickfire.repository.UserRepository
+import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
 
 class ConnectFragment : Fragment() {
 
-    private lateinit var partyRepository: PartyRepository
+    private lateinit var partyViewModel: PartyViewModel
     private lateinit var userViewModel: UserViewModel
     private lateinit var currentUser: User
     private lateinit var startMatchButton: Button
@@ -70,6 +72,8 @@ class ConnectFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.e("ConnectFragment", "On View Created")
+
 
         // Set up Bluetooth receiver
         val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
@@ -91,16 +95,22 @@ class ConnectFragment : Fragment() {
     }
 
     private fun initializeUserData(view: View) {
+        Log.e("ConnectFragment", "Initialize User Data")
+
+        val partyDao: PartyDao = QuickfireDatabase.getDatabase(requireContext()).partyDao()
+        val partyRepository: PartyRepository by lazy { PartyRepository(partyDao) }
+        partyViewModel = PartyViewModel(partyRepository)
+
         val userDao: UserDao = QuickfireDatabase.getDatabase(requireContext()).userDao()
         val userRepository: UserRepository by lazy { UserRepository(userDao) }
-        partyRepository = PartyRepository(QuickfireDatabase.getDatabase(requireContext()).partyDao())
         userViewModel = UserViewModel(userRepository)
 
+        Log.e("ConnectFragment", "Parties 1 -> " + partyViewModel.parties)
 
 
         // Load or create the current user
         val usersLiveData: LiveData<List<User>> = userViewModel.users
-        usersLiveData.observe(viewLifecycleOwner, { users ->
+        usersLiveData.observe(viewLifecycleOwner) { users ->
             if (users.isNotEmpty()) {
                 currentUser = users[0]
             } else {
@@ -112,14 +122,32 @@ class ConnectFragment : Fragment() {
 
             startMatchButton = view.findViewById(R.id.startMatchButton)
             startMatchButton.setOnClickListener {
+//                // Gets the existing party if exists
+//                val partyByName = partyViewModel.getPartyByName(currentUser.name)
+//
+//                // Gets current parties (list)
+//                val partiesLiveData: LiveData<List<Party>> = partyViewModel.parties
+//                partiesLiveData.observe(viewLifecycleOwner) { parties ->
+//                    Log.e("ConnectFragment", "Parties inside observe -> " + parties)
+//
+//                    // Checks if the party already exists
+//                    if (parties.contains(partyByName)) {
+//                        Log.e("ConnectFragment", "Party already exists, so instead create other named party")
+//
+//                        }
+//                    }
+//                }
+
+
                 // Create a new party with the current user as the initiator
-                val party = Party("Party Name", arrayListOf(currentUser.id) ,
+                val party = Party(
+                    "Party Name", arrayListOf(currentUser.id),
                     arrayListOf()
                 )
 
                 // Start a coroutine to insert the party into the database
                 GlobalScope.launch(Dispatchers.IO) {
-                    val partyId = partyRepository.insert(party)
+                    val partyId = partyViewModel.addParty(party)
 
                     // Navigate to the PlayFragment with the party details
                     val fragmentTransaction = parentFragmentManager.beginTransaction()
@@ -134,7 +162,8 @@ class ConnectFragment : Fragment() {
                         .commit()
                 }
             }
-        })
+        }
+        Log.e("ConnectFragment", "Parties 2 -> " + partyViewModel.parties)
     }
 
     private fun disableButton(button: Button, view: View) {

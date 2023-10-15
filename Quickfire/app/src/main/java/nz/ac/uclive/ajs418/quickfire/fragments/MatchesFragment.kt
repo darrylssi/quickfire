@@ -10,13 +10,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.adapters.PartyAdapter
+import nz.ac.uclive.ajs418.quickfire.dao.PartyDao
+import nz.ac.uclive.ajs418.quickfire.database.QuickfireDatabase
 import nz.ac.uclive.ajs418.quickfire.entity.Party
+import nz.ac.uclive.ajs418.quickfire.repository.PartyRepository
+import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 
 // Fragment responsible for displaying a list of parties
 class MatchesFragment : Fragment(), PartyAdapter.OnItemClickListener {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var testAdapter: PartyAdapter
+    private lateinit var partyAdapter: PartyAdapter
+    private lateinit var partyViewModel: PartyViewModel
 
     // Create simplified dummy data for parties
     private val parties = arrayOf<Party>(
@@ -32,15 +37,21 @@ class MatchesFragment : Fragment(), PartyAdapter.OnItemClickListener {
         // Inflate the fragment's layout
         val view = inflater.inflate(R.layout.fragment_matches, container, false)
 
+        // Gets parties from database
+        val partyDao: PartyDao = QuickfireDatabase.getDatabase(requireContext()).partyDao()
+        val partyRepository: PartyRepository by lazy { PartyRepository(partyDao) }
+        partyViewModel = PartyViewModel(partyRepository)
+//        parties = partyViewModel.parties  as Array<Party>
+
         // Initialize RecyclerView and its adapter
         recyclerView = view.findViewById(R.id.partyRecyclerView)
-        testAdapter = PartyAdapter(parties, this)
+        partyAdapter = PartyAdapter(parties, this)
 
         // Set a LinearLayoutManager for the RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         // Set the adapter for the RecyclerView
-        recyclerView.adapter = testAdapter
+        recyclerView.adapter = partyAdapter
 
         return view
     }

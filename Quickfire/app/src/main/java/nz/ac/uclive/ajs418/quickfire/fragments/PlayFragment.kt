@@ -92,6 +92,10 @@ class PlayFragment() : Fragment() {
         }
     }
 
+    private fun addMediaToSolo() {
+
+    }
+
 
 
     // Function to set up swipe gesture detection for posterView

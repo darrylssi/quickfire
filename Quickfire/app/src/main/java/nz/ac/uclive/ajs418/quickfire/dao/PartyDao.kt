@@ -19,6 +19,9 @@ interface PartyDao {
     @Query("SELECT * FROM party WHERE id = :partyId")
     suspend fun getPartyById(partyId: Long):Party?
 
+    @Query("SELECT * FROM party WHERE name = :partyName")
+    suspend fun getPartyByName(partyName: String):Party?
+
     @Update
     suspend fun update(party: Party)
 }

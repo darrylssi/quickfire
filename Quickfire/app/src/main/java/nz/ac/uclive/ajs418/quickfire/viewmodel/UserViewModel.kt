@@ -8,9 +8,6 @@ import kotlinx.coroutines.launch
 import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.repository.UserRepository
 import androidx.lifecycle.*
-import kotlinx.coroutines.launch
-import nz.ac.uclive.ajs418.quickfire.entity.User
-import nz.ac.uclive.ajs418.quickfire.repository.UserRepository
 import java.lang.IllegalArgumentException
 
 

@@ -16,7 +16,7 @@ class Party : Parcelable {
     @ColumnInfo var members: ArrayList<Long>
     @ColumnInfo var matches: ArrayList<Long>
 
-    constructor(name: String, members: ArrayList<Long>, matches: ArrayList<Long>, media_type : Boolean) {
+    constructor(name: String, members: ArrayList<Long>, matches: ArrayList<Long>) {
         this.name = name
         this.members = members
         this.matches = matches

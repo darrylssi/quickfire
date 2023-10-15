@@ -18,6 +18,10 @@ class PartyRepository(private val partyDao: PartyDao) {
         return partyDao.getPartyById(partyId)
     }
 
+    suspend fun getPartyByName(partyName: String): Party? {
+        return partyDao.getPartyByName(partyName)
+    }
+
     suspend fun updateParty(party: Party) {
         partyDao.update(party)
     }

@@ -17,6 +17,10 @@ class PartyViewModel(private val partyRepository: PartyRepository) : ViewModel()
         partyRepository.insert(party)
     }
 
+    fun getPartyByName(partyName: String) = viewModelScope.launch {
+        partyRepository.getPartyByName(partyName)
+    }
+
 }
 
 class PartyViewModelFactory(private val partyRepository: PartyRepository) : ViewModelProvider.Factory {
