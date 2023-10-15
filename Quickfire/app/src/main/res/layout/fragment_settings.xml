@@ -45,7 +45,7 @@
         android:layout_marginStart="25dp"
         android:layout_marginTop="37dp"
         android:text="@string/theme"
-        android:textColor="@color/black"
+        style="@style/TextColor"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerText2" />
@@ -57,13 +57,13 @@
         android:layout_marginStart="25dp"
         android:layout_marginTop="37dp"
         android:text="@string/media"
-        android:textColor="@color/black"
+        style="@style/TextColor"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider2" />
 
-    <Switch
-        android:id="@+id/switch1"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/themeSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -73,8 +73,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerText2" />
 
-    <Switch
-        android:id="@+id/switch2"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/mediaSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -105,23 +105,23 @@
         app:layout_constraintTop_toBottomOf="@id/divider2" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/themeText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="35dp"
         android:text="@string/light"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch1"
-        android:layout_width="wrap_content" />
+        app:layout_constraintTop_toBottomOf="@+id/themeSwitch" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/mediaText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="35dp"
         android:text="@string/tv_show"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/switch2" />
+        app:layout_constraintTop_toBottomOf="@id/mediaSwitch" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,10 @@
 package nz.ac.uclive.ajs418.quickfire
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -49,6 +51,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE)
+        val isDarkTheme = sharedPreferences.getBoolean("isNightMode", false)
+
+        // Set the theme based on the saved preference
+        if (isDarkTheme)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        
         partyViewModel.parties.observe(this, Observer { parties ->
             parties?.let {
                 Log.d("MainActivity", "Parties: $parties")
