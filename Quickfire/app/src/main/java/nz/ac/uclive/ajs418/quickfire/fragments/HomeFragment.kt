@@ -1,5 +1,6 @@
 package nz.ac.uclive.ajs418.quickfire.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,9 +10,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.dao.PartyDao
 import nz.ac.uclive.ajs418.quickfire.dao.UserDao
@@ -27,8 +32,16 @@ class HomeFragment : Fragment() {
 
     private lateinit var partyViewModel: PartyViewModel
     private lateinit var userViewModel: UserViewModel
-    private lateinit var currentUser: User
     private lateinit var soloPlayButton: Button
+
+    private lateinit var coroutineScope: CoroutineScope
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        coroutineScope = CoroutineScope(Dispatchers.Main + Job())
+        userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
+        partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +66,10 @@ class HomeFragment : Fragment() {
             replaceWithServerConnect()
         }
 
-        initializeUserData(view)
+        lifecycleScope.launch {
+            initializeUserData(view)
+        }
+
     }
 
     private fun replaceWithClientConnect() {
@@ -72,89 +88,67 @@ class HomeFragment : Fragment() {
             .commit()
     }
 
-    private fun initializeUserData(view: View) {
+    private suspend fun initializeUserData(view: View) {
         Log.e("HomeFragment", "Initialize User Data")
 
-        val partyDao: PartyDao = QuickfireDatabase.getDatabase(requireContext()).partyDao()
-        val partyRepository: PartyRepository by lazy { PartyRepository(partyDao) }
-        partyViewModel = PartyViewModel(partyRepository)
-
-        val userDao: UserDao = QuickfireDatabase.getDatabase(requireContext()).userDao()
-        val userRepository: UserRepository by lazy { UserRepository(userDao) }
-        userViewModel = UserViewModel(userRepository)
-
-        Log.e("HomeFragment", "Parties 1 -> " + partyViewModel.parties)
-
-
         // Load or create the current user
+        val currUserCheck: User? = withContext(coroutineScope.coroutineContext + Dispatchers.IO) {
+            userViewModel.getUserByName("Me")
+        }
+
+        // Load or create the current party
+        val currPartyCheck: Party? = withContext(coroutineScope.coroutineContext + Dispatchers.IO) {
+            partyViewModel.getPartyByName("My Party")
+        }
+
+        // Observe users and parties LiveData
         val usersLiveData: LiveData<List<User>> = userViewModel.users
+        val partiesLiveData: LiveData<List<Party>> = partyViewModel.parties
+
         usersLiveData.observe(viewLifecycleOwner) { users ->
-            // If no user exists, create a new one
-            currentUser = User("My", "light")
-            userViewModel = UserViewModel(userRepository)
-            userViewModel.addUser(currentUser)
-
-            Log.e("HomeFragment", "Curr User -> " + currentUser)
-
-            soloPlayButton = view.findViewById(R.id.soloPlayButton)
-            soloPlayButton.setOnClickListener {
-//                // Gets the existing solo party if exists
-//                val partyByName = partyViewModel.getPartyByName(currentUser.name)
-//
-//                // Gets current parties (list)
-//                val partiesLiveData: LiveData<List<Party>> = partyViewModel.parties
-//                partiesLiveData.observe(viewLifecycleOwner) { parties ->
-//                    Log.e("HomeFragment", "Parties inside observe -> " + parties)
-//
-//                    // Checks if the party already exists
-//                    if (parties.contains(partyByName)) {
-//                        Log.e("HomeFragment", "Yes, it is here")
-//
-//                        // Start a coroutine to insert the party into the database
-//                        GlobalScope.launch(Dispatchers.IO) {
-//                            val partyId = partyViewModel.getPartyByName(currentUser.name)
-//
-//                            // Navigate to the PlayFragment with the party details
-//                            val fragmentTransaction = parentFragmentManager.beginTransaction()
-//                            val playFragment = PlayFragment()
-//
-//                            // Pass the party details to the PlayFragment
-//                            val bundle = Bundle()
-//                            bundle.putParcelable("party", party)
-//                            playFragment.arguments = bundle
-//
-//                            fragmentTransaction.replace(R.id.fragmentContainer, playFragment)
-//                                .commit()
-//                        }
-//                    }
-//                }
-
-                // Create a new party with the current user as the initiator
-                val party = Party(
-                    currentUser.name, arrayListOf(currentUser.id),
-                    arrayListOf()
-                )
-                Log.e("HomeFragment", "Party -> " + party)
-
-                // Start a coroutine to insert the party into the database
-                GlobalScope.launch(Dispatchers.IO) {
-                    val partyId = partyViewModel.addParty(party)
-
-                    // Navigate to the PlayFragment with the party details
-                    val fragmentTransaction = parentFragmentManager.beginTransaction()
-                    val playFragment = PlayFragment()
-
-                    // Pass the party details to the PlayFragment
-                    val bundle = Bundle()
-                    bundle.putParcelable("party", party)
-                    playFragment.arguments = bundle
-
-                    fragmentTransaction.replace(R.id.fragmentContainer, playFragment)
-                        .commit()
+            if (users.isNotEmpty()) {
+                if (users.contains(currUserCheck)) {
+                    userViewModel.setId(currUserCheck!!.id)
+                } else {
+                    // If no user exists, create a new one
+                    val currentUser = User("Me", "light")
+                    userViewModel.addUser(currentUser)
+                    userViewModel.setId(currentUser.id)
                 }
+                Log.e("HomeFragment", "User 1 -> " + userViewModel.currentId)
             }
         }
-        Log.e("HomeFragment", "Parties 2 -> " + partyViewModel.parties)
+
+        partiesLiveData.observe(viewLifecycleOwner) { parties ->
+            if (parties.isNotEmpty()) {
+                if (currPartyCheck != null && parties.contains(currPartyCheck)) {
+                    partyViewModel.setCurrentParty(currPartyCheck!!.id)
+                } else {
+                    // If no party exists, create a new one
+                    val currentParty = Party("My Party", arrayListOf(userViewModel.currentId), arrayListOf())
+                    partyViewModel.addParty(currentParty)
+                    partyViewModel.setCurrentParty(currentParty.id)
+                }
+                Log.e("HomeFragment", "Party 1 -> " + partyViewModel.currentId)
+            }
+        }
+
+        soloPlayButton = view.findViewById(R.id.soloPlayButton)
+        soloPlayButton.setOnClickListener {
+            // Start a coroutine to insert the party into the database
+            GlobalScope.launch(Dispatchers.IO) {
+                // Navigate to the PlayFragment
+                val fragmentTransaction = parentFragmentManager.beginTransaction()
+                val playFragment = PlayFragment()
+
+                fragmentTransaction.replace(R.id.fragmentContainer, playFragment)
+                    .commit()
+            }
+            Log.e("HomeFragment", "Parties 2 -> " + partyViewModel.parties)
+        }
     }
+
+
+
 
 }

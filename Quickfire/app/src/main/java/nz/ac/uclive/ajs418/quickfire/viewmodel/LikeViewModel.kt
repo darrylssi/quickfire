@@ -17,12 +17,16 @@ class LikeViewModel(private val likeRepository: LikeRepository) : ViewModel() {
     fun addLike(like: Like) = viewModelScope.launch {
         likeRepository.insert(like)
     }
-}
 
+    fun getLikesByMovieAndParty(partyId : Long, movieId : Long): Like? {
+        return likeRepository.findByPartyAndMovie(partyId, movieId)
+    }
+
+}
 
 class LikeViewModelFactory(private val likeRepository: LikeRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(PartyViewModel::class.java)) {
+        if(modelClass.isAssignableFrom(LikeViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
             return LikeViewModel(likeRepository) as T
         }

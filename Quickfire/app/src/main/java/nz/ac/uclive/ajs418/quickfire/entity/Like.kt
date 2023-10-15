@@ -3,10 +3,10 @@ package nz.ac.uclive.ajs418.quickfire.entity
 import androidx.room.*
 
 @Entity(tableName = "like_table")
-class Like (
+class Like(
     @ColumnInfo var partyId: Long,
     @ColumnInfo var movieId: Long,
-    @ColumnInfo var likedBy: ArrayList<Long>
+    @ColumnInfo var likedBy: Long
         ){
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 

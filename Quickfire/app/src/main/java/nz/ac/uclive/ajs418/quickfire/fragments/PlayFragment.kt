@@ -1,5 +1,6 @@
 package nz.ac.uclive.ajs418.quickfire.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -7,25 +8,27 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import nz.ac.uclive.ajs418.quickfire.MainActivity
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.database.QuickfireDatabase
+import nz.ac.uclive.ajs418.quickfire.entity.Like
 import nz.ac.uclive.ajs418.quickfire.entity.Media
-import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.repository.MediaRepository
-import nz.ac.uclive.ajs418.quickfire.repository.UserRepository
+import nz.ac.uclive.ajs418.quickfire.viewmodel.LikeViewModel
+import nz.ac.uclive.ajs418.quickfire.viewmodel.PartyViewModel
 import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
-import java.util.*
 
 class PlayFragment() : Fragment() {
+
+    private lateinit var userViewModel: UserViewModel
+    private lateinit var partyViewModel: PartyViewModel
+    private lateinit var likeViewModel: LikeViewModel
 
     // UI elements
     private lateinit var posterView: ImageView
@@ -38,10 +41,21 @@ class PlayFragment() : Fragment() {
 
     private lateinit var mediaRepository: MediaRepository
     private var currentMedia: Media? = null
+    private var currentPartyId: Long = 0L
+    private var currentUserId: Long = 0L
 
     private var startX = 0f
     private var startY = 0f
     private val SWIPE_THRESHOLD = 100
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
+        partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
+        likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
+        currentPartyId = partyViewModel.currentId
+        currentUserId = userViewModel.currentId
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,6 +86,7 @@ class PlayFragment() : Fragment() {
 
         // Handle the "Random" button click
         yesButton.setOnClickListener {
+            currentMedia?.let { it1 -> addLike(it1.id) }
             loadRandomMedia()
         }
 
@@ -84,6 +99,7 @@ class PlayFragment() : Fragment() {
     }
 
 
+
     // Function to load a random media item
     private fun loadRandomMedia() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -91,11 +107,6 @@ class PlayFragment() : Fragment() {
             displayMedia(currentMedia)
         }
     }
-
-    private fun addMediaToSolo() {
-
-    }
-
 
 
     // Function to set up swipe gesture detection for posterView
@@ -138,6 +149,7 @@ class PlayFragment() : Fragment() {
 
     // Function to handle swipe right action
     private fun handleSwipeRight() {
+        currentMedia?.let { it1 -> addLike(it1.id) }
         loadRandomMedia()
     }
 
@@ -145,6 +157,27 @@ class PlayFragment() : Fragment() {
     private fun handleSwipeLeft() {
         loadRandomMedia()
     }
+
+    private fun addLike(currentMediaId: Long) {
+        Log.d("SPF", "Adding like")
+        val likeInstance = currentMedia?.let { likeViewModel.getLikesByMovieAndParty(currentPartyId, it.id) }
+        if (likeInstance != null) {
+            // likeInstance is not null, you can use it here
+            if (likeInstance.likedBy == currentUserId) {
+                // Match found
+                Log.d("SPF", "Match Found")
+                partyViewModel.addMatchToParty(currentPartyId, currentMediaId)
+                val toast = Toast.makeText(context, "MATCH FOUND 😍", Toast.LENGTH_LONG)
+                toast.show()
+            }
+        } else {
+            // likeInstance is null, create new like
+            Log.d("SPF", "Create like")
+            val like = Like(currentPartyId, currentMediaId, currentUserId)
+            likeViewModel.addLike(like)
+        }
+    }
+
 
     // Function to display media details in the UI
     private fun displayMedia(media: Media?) {

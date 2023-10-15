@@ -4,6 +4,7 @@ import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow
 import nz.ac.uclive.ajs418.quickfire.dao.PartyDao
 import nz.ac.uclive.ajs418.quickfire.entity.Party
+import nz.ac.uclive.ajs418.quickfire.entity.User
 
 class PartyRepository(private val partyDao: PartyDao) {
     val parties: Flow<List<Party>> = partyDao.getAll()
@@ -25,4 +26,17 @@ class PartyRepository(private val partyDao: PartyDao) {
     suspend fun updateParty(party: Party) {
         partyDao.update(party)
     }
+
+    suspend fun addMatch(partyId: Long, mediaId: Long) {
+        // Step 1: Retrieve the party
+        val party = getPartyById(partyId)
+
+        // Step 2: Update the party's matches list
+        party?.let {
+            it.matches.add(mediaId)
+            // Step 3: Update the party in the database
+            updateParty(it)
+        }
+    }
+
 }

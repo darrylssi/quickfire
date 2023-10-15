@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import nz.ac.uclive.ajs418.quickfire.entity.Party
+import nz.ac.uclive.ajs418.quickfire.entity.User
 
 @Dao
 interface PartyDao {

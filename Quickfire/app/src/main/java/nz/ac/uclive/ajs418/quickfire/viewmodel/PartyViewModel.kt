@@ -7,18 +7,29 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import nz.ac.uclive.ajs418.quickfire.entity.Party
+import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.repository.PartyRepository
 import java.lang.IllegalArgumentException
 
 class PartyViewModel(private val partyRepository: PartyRepository) : ViewModel() {
     val parties: LiveData<List<Party>> = partyRepository.parties.asLiveData()
+    var currentId = 0L
 
     fun addParty(party: Party) = viewModelScope.launch {
         partyRepository.insert(party)
     }
 
-    fun getPartyByName(partyName: String) = viewModelScope.launch {
-        partyRepository.getPartyByName(partyName)
+    fun setCurrentParty(partyId : Long) {
+        currentId = partyId
+    }
+
+    fun addMatchToParty(partyId: Long, mediaId: Long) = viewModelScope.launch {
+        partyRepository.addMatch(partyId, mediaId)
+    }
+
+
+    suspend fun getPartyByName(partyName: String): Party? {
+        return partyRepository.getPartyByName(partyName)
     }
 
 }

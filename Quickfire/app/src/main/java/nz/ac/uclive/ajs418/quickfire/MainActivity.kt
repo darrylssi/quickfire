@@ -74,18 +74,18 @@ class MainActivity : AppCompatActivity() {
             users?.let {
                 Log.d("MainActivity", "Users: $users")
 
-                if (!users.isNullOrEmpty()) {
-                    val length = users.size
-                    Log.d("MainActivity", "Array Length: $length")
-                    val firstUserName = users[0].name
-                    val firstType = users[0].bluetoothType
-                    Log.d("MainActivity", "First User Name: $firstUserName")
-                    Log.d("MainActivity", "First Type: $firstType")
-                    val secUserName = users[1].name
-                    val secType = users[1].bluetoothType
-                    Log.d("MainActivity", "Second User Name: $secUserName")
-                    Log.d("MainActivity", "Second User Type: $secType")
-                }
+//                if (!users.isNullOrEmpty()) {
+//                    val length = users.size
+//                    Log.d("MainActivity", "Array Length: $length")
+//                    val firstUserName = users[0].name
+//                    val firstType = users[0].bluetoothType
+//                    Log.d("MainActivity", "First User Name: $firstUserName")
+//                    Log.d("MainActivity", "First Type: $firstType")
+//                    val secUserName = users[1].name
+//                    val secType = users[1].bluetoothType
+//                    Log.d("MainActivity", "Second User Name: $secUserName")
+//                    Log.d("MainActivity", "Second User Type: $secType")
+//                }
             }
         })
 
