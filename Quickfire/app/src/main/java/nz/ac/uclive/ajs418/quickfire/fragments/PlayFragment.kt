@@ -58,7 +58,7 @@ class PlayFragment() : Fragment() {
         userViewModel = (requireActivity() as MainActivity).getUserViewModelInstance()
         partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
         likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
-        currentPartyId = partyViewModel.currentId
+        currentPartyId = partyViewModel.currentPartyId
     }
 
     override fun onCreateView(

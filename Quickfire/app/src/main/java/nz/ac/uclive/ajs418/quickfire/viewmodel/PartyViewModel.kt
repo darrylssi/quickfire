@@ -23,6 +23,10 @@ class PartyViewModel(private val partyRepository: PartyRepository) : ViewModel()
         currentPartyName = partyName
     }
 
+    fun setCurrentParty(id: Long){
+        currentPartyId = id
+    }
+
     fun setCurrentId(partyId : Long) {
         currentPartyId = partyId
     }

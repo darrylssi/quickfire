@@ -123,7 +123,7 @@ class HomeFragment : Fragment() {
                     partyViewModel.addParty(currentParty)
                     partyViewModel.setCurrentParty(currentParty.id)
                 }
-                Log.e("HomeFragment", "Party 1 -> " + partyViewModel.currentId)
+                Log.e("HomeFragment", "Party 1 -> " + partyViewModel.currentPartyId)
             }
         }
 

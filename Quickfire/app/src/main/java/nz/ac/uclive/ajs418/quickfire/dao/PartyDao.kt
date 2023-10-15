@@ -28,6 +28,4 @@ interface PartyDao {
     @Update
     suspend fun update(party: Party)
 
-    @Query("SELECT * FROM PARTY WHERE name = :currentPartyName")
-    suspend fun getPartyByName(currentPartyName: String): Party?
 }

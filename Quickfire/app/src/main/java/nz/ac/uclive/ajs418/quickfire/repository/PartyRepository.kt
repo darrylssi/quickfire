@@ -43,7 +43,5 @@ class PartyRepository(private val partyDao: PartyDao) {
         }
     }
 
-    suspend fun getPartyByName(currentPartyName: String): Party? {
-        return partyDao.getPartyByName(currentPartyName)
-    }
+
 }
