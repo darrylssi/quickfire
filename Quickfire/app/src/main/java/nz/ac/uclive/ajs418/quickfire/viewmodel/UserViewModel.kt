@@ -18,6 +18,10 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun setId(userId : Long) {
         currentId = userId
     }
+
+    suspend fun getUserByName(userName: String): User? {
+        return userRepository.getUserByName(userName)
+    }
 }
 
 class UserViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {

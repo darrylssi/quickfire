@@ -17,7 +17,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import nz.ac.uclive.ajs418.quickfire.MainActivity
@@ -42,7 +44,10 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
 
     private var serverUser = User("", "")
     private var clientUser = User("", "")
+
     private var party = Party("", arrayListOf(), arrayListOf())
+
+    private lateinit var coroutineScope: CoroutineScope
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -50,6 +55,7 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
         partyViewModel = (requireActivity() as MainActivity).getPartyViewModelInstance()
         likeViewModel = (requireActivity() as MainActivity).getLikeViewModelInstance()
         mediaViewModel = (requireActivity() as MainActivity).getMediaViewModelInstance()
+        coroutineScope = CoroutineScope(Dispatchers.Main + Job())
     }
 
     override fun onCreateView(
@@ -112,7 +118,7 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
         }
     }
 
-    override fun onDataReceived(string: String) {
+    override suspend fun onDataReceived(string: String) {
         Log.d("ServerConnectFragment", string)
         // Handle the received data here
         if (string.startsWith("client_name:")) {
@@ -125,20 +131,38 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
             val username = string.substringAfter("server_name:")
             serverUser = User(username, "SERVER")
             lifecycleScope.launch { userViewModel.addUser(serverUser) }
-            lifecycleScope.launch { userViewModel.setId(serverUser.id) }
+
         }
         if (string.startsWith("party_name:")) {
             val partyName = string.substringAfter("party_name:")
             Log.d("SCF: Client Username", clientUser.name)
             Log.d("SCF: Server Username", serverUser.name)
-            val partyMembers = ArrayList<Long>().apply {
-                add(clientUser.id)
-                add(serverUser.id)
+            lifecycleScope.launch {
+                val client = getUserByName(clientUser.name)
+                val server = getUserByName(serverUser.name)
+                val clientID = client?.id
+                val serverID = server?.id
+                Log.d("CCF: Client ", "ID: $clientID")
+                Log.d("CCF: Server ", "ID: $serverID")
+                val partyMembers = ArrayList<Long>().apply {
+                    if (client != null) {
+                        add(client.id)
+                    }
+                    if (server != null) {
+                        add(server.id)
+                    }
+                }
+                party = Party(partyName, partyMembers, arrayListOf()) //  Matches is initially empty
+                lifecycleScope.launch { partyViewModel.addParty(party) }
+                lifecycleScope.launch { partyViewModel.setCurrentParty(party.id) }
+                switchToServerPlayFragment(bluetoothServerService)
             }
-            party = Party(partyName, partyMembers, arrayListOf()) //  Matches is initially empty
-            lifecycleScope.launch { partyViewModel.addParty(party) }
-            lifecycleScope.launch { partyViewModel.setCurrentParty(party.id) }
-            switchToServerPlayFragment(bluetoothServerService)
+        }
+    }
+
+    private suspend fun getUserByName(name : String) : User? {
+        return withContext(coroutineScope.coroutineContext + Dispatchers.IO) {
+            userViewModel.getUserByName(clientUser.name)
         }
     }
 

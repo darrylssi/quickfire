@@ -63,7 +63,6 @@ class BluetoothServerService {
                 outputStream = bluetoothSocket?.outputStream
 
                 // Start reading data
-                // writeData("Hello Client, I'm Server")
                 val deviceName = bluetoothAdapter?.name
                 writeData("server_name:$deviceName")
                 returnDataToFrag("server_name:$deviceName")
@@ -99,7 +98,7 @@ class BluetoothServerService {
         }
     }
 
-    private fun returnDataToFrag(string: String) {
+    private suspend fun returnDataToFrag(string: String) {
         callback?.onDataReceived(string)
         Log.d("BluetoothServerService Return data to frag", string)
     }

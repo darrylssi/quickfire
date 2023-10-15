@@ -15,4 +15,8 @@ class UserRepository(private val userDao: UserDao) {
     suspend fun insert(user: User){
         userDao.insert(user)
     }
+
+    suspend fun getUserByName(userName: String) : User? {
+        return userDao.getUserByName(userName)
+    }
 }
