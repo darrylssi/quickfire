@@ -117,6 +117,7 @@ class ServerConnectFragment : Fragment(), BluetoothServiceCallback {
             val username = string.substringAfter("server_name:")
             serverUser = User(username, "SERVER")
             lifecycleScope.launch { userViewModel.addUser(serverUser) }
+            lifecycleScope.launch { userViewModel.setCurrentId(serverUser.id) }
         }
         if (string.startsWith("party_name:")) {
             val partyName = string.substringAfter("party_name:")

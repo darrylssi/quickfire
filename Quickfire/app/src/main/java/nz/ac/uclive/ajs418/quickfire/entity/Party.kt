@@ -11,10 +11,10 @@ class Party : Parcelable {
 
     @PrimaryKey(autoGenerate = true) var id: Long = 0
     @ColumnInfo var name: String
-    @ColumnInfo var members: List<Long>
-    @ColumnInfo var matches: List<Long>
+    @ColumnInfo var members: ArrayList<Long>
+    @ColumnInfo var matches: ArrayList<Long>
 
-    constructor(name: String, members: List<Long>, matches: List<Long>) {
+    constructor(name: String, members: ArrayList<Long>, matches: ArrayList<Long>) {
         this.name = name
         this.members = members
         this.matches = matches

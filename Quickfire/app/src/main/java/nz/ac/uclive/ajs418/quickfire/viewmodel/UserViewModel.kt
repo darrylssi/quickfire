@@ -10,15 +10,14 @@ import java.lang.IllegalArgumentException
 
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     val users: LiveData<List<User>> = userRepository.users.asLiveData()
-
+    var currentId: Long = 0L
     fun addUser(user: User) = viewModelScope.launch {
         userRepository.insert(user)
     }
 
-    suspend fun deleteUsers() = viewModelScope.launch {
-        userRepository.deleteAll()
+    fun setCurrentId(userId : Long) {
+        currentId = userId
     }
-
 }
 
 class UserViewModelFactory(private val userRepository: UserRepository) : ViewModelProvider.Factory {

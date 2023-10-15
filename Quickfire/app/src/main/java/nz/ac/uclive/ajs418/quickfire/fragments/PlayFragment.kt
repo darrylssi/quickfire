@@ -1,7 +1,6 @@
 package nz.ac.uclive.ajs418.quickfire.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
@@ -11,19 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import nz.ac.uclive.ajs418.quickfire.R
 import nz.ac.uclive.ajs418.quickfire.database.QuickfireDatabase
 import nz.ac.uclive.ajs418.quickfire.entity.Media
-import nz.ac.uclive.ajs418.quickfire.entity.User
 import nz.ac.uclive.ajs418.quickfire.repository.MediaRepository
-import nz.ac.uclive.ajs418.quickfire.repository.UserRepository
-import nz.ac.uclive.ajs418.quickfire.viewmodel.UserViewModel
-import java.util.*
 
 class PlayFragment() : Fragment() {
 
@@ -72,6 +63,7 @@ class PlayFragment() : Fragment() {
 
         // Handle the "Random" button click
         yesButton.setOnClickListener {
+            currentMedia?.let { it1 -> addLike(it1.id) }
             loadRandomMedia()
         }
 
@@ -134,12 +126,19 @@ class PlayFragment() : Fragment() {
 
     // Function to handle swipe right action
     private fun handleSwipeRight() {
+        currentMedia?.let { addLike(it.id) }
         loadRandomMedia()
     }
 
     // Function to handle swipe left action
     private fun handleSwipeLeft() {
         loadRandomMedia()
+    }
+
+    private fun addLike(currentMediaId: Long) {
+        // add like
+        // check for match
+        TODO("Not yet implemented")
     }
 
     // Function to display media details in the UI
