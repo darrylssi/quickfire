@@ -120,6 +120,7 @@ class ClientConnectFragment : Fragment(), BluetoothServiceCallback {
     private fun enableStartButton(view: View) {
         val startButton = view.findViewById<Button>(R.id.startMatchButton)
         startButton.isEnabled = true
+        startButton.setBackgroundColor(ContextCompat.getColor(view.context, R.color.purple_main))
     }
 
     private suspend fun getUserByName(name : String) : User? {
